@@ -1,0 +1,62 @@
+---
+import { Image } from "astro:assets";
+import crest from "../assets/crest.svg";
+---
+
+<section class="grid grid-cols-2 h-screen">
+  <div class="grid justify-center items-center">
+    <Image
+      src={crest}
+      alt="dabney crest"
+      class="m-auto pointer-events-none col-start-1 row-start-1"
+    />
+    <div class="flex flex-col justify-center px-20 col-start-1 row-start-1">
+      <h1
+        class="text-cream-100 font-bold text-7xl text-balance -rotate-[2deg] mb-8 z-10"
+      >
+        Welcome To Dabney Hovse
+      </h1>
+      <p class="z-10 mb-4">
+        Surviving Caltech isn't always easy. Sometimes you just need to take
+        some time out of your your day to have a good laugh.
+      </p>
+      <p class="text-lg z-10 mb-8">
+        Our current motto is:
+        <span
+          class="bg-cream-100 text-cream-100 rotate-[1.5deg] inline-block ml-1 leading-tight"
+        >
+          made you look
+        </span>
+      </p>
+      <div class="grid grid-cols-3 gap-4 text-lg">
+        <a href="#social-calendar">
+          <button
+            class="bg-darb-900 px-3 py-2 rounded-full w-full hover:bg-darb-800 transition hover:cursor-pointer"
+          >
+            Social Calendar
+          </button>
+        </a>
+        <a href="#gallery">
+          <button
+            class="bg-darb-900 px-3 py-2 rounded-full w-full hover:bg-darb-800 transition hover:cursor-pointer"
+          >
+            Gallery
+          </button>
+        </a>
+        <a href="#other-links">
+          <button
+            class="bg-darb-900 px-3 py-2 rounded-full w-full hover:bg-darb-800 transition hover:cursor-pointer"
+          >
+            Other Links
+          </button>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="h-screen w-full">
+    <img
+      src="/src/assets/gallery/t_pose.jpg"
+      class="h-full w-full object-cover rounded-l-2xl"
+    />
+  </div>
+</section>

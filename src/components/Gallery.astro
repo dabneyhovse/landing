@@ -1,0 +1,66 @@
+---
+import type { ImageMetadata } from "astro";
+import { Image } from "astro:assets";
+
+// TODO this needs to be shuffled because right now its in alphabetical order which is not ideal
+const images = Object.values(
+  import.meta.glob<{ default: ImageMetadata }>(
+    "/src/assets/gallery/*.{jpeg,jpg,png,gif}"
+  )
+);
+
+const rot = () => (Math.random() + 1) * (Math.random() > 0.5 ? 1 : -1);
+---
+
+<section id="gallery">
+  <h2
+    class="text-cream-100 font-bold text-7xl text-balance rotate-[1deg] mb-8 z-10 text-center"
+  >
+    Gallery
+  </h2>
+
+  <div class="grid grid-cols-3 mx-16 gap-6">
+    <div class="flex flex-col gap-6">
+      {
+        images
+          .filter((_, i) => i % 3 == 0)
+          .map((fn) => (
+            <Image
+              src={fn()}
+              alt=""
+              class="w-full rounded-xl"
+              style={`rotate: ${rot()}deg`}
+            />
+          ))
+      }
+    </div>
+    <div class="flex flex-col gap-8">
+      {
+        images
+          .filter((_, i) => i % 3 == 1)
+          .map((fn) => (
+            <Image
+              src={fn()}
+              alt=""
+              class="w-full rounded-xl"
+              style={`rotate: ${rot()}deg`}
+            />
+          ))
+      }
+    </div>
+    <div class="flex flex-col gap-8">
+      {
+        images
+          .filter((_, i) => i % 3 == 2)
+          .map((fn) => (
+            <Image
+              src={fn()}
+              alt=""
+              class="w-full rounded-xl"
+              style={`rotate: ${rot()}deg`}
+            />
+          ))
+      }
+    </div>
+  </div>
+</section>

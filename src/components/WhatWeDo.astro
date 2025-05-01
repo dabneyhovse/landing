@@ -1,0 +1,72 @@
+---
+import events from "../data/events.json";
+import Event from "./Event.astro";
+
+const rotations = Array(events.length)
+  .fill(null)
+  .map((_, i) => (i % 2 ? -1 : 1) * 1.5 + Math.random() * 0.5);
+---
+
+<section class="max-w-[65ch] m-auto">
+  <h2
+    class="text-cream-100 font-bold text-7xl text-balance rotate-[1.5deg] mb-8 z-10 text-center"
+  >
+    What We Do
+  </h2>
+  <div class="flex flex-col gap-8">
+    <p>
+      Welcome to Dabney! Here, you can usually find people doing sets in the
+      gazebo or library and hanging out in the lounge, talking or screening
+      movies. We have a massive collection of board games to play, and a large
+      pile of squashy objects in the lounge, called the bear pit. We just
+      finished a new mural in the house, many darbs (as Dabney members are
+      known) are artistically or musically inclined.
+    </p>
+    <p>
+      Here at Dabney, our family of eccentric Darbs have cultivated a space that
+      makes all of us feel at home. You have any crazy ideas, like driving up a
+      mountain to bring back snow to Dabney's courtyard? Or racing your friends
+      across campus in wheeled trash can-based "hot tubs"? Or barricading the
+      house against invading zombies (members of Venerable)? If you get enough
+      support, we'll probably turn it into one of our weekly social events!
+    </p>
+    <p>
+      We hold some other large events, including the Pumpkin Drop, where we drop
+      LN2 frozen pumpkins from the roof of the Caltech Hall to the sound of the
+      1812 Overture, our yearly Interhouse (a themed party), and a visit to
+      Joshua Tree to watch the stars! In addition to these large events we also
+      plan smaller weekly social events at the start of each new term.
+    </p>
+  </div>
+</section>
+<section>
+  <div class="flex overflow-x-hidden">
+    <div class="track">
+      {events.map((props, i) => <Event {...props} rotation={rotations[i]} />)}
+    </div>
+    <div class="track">
+      {events.map((props, i) => <Event {...props} rotation={rotations[i]} />)}
+    </div>
+  </div>
+</section>
+
+<style>
+  .track {
+    display: flex;
+    gap: 4rem;
+    align-items: center;
+    animation: scroll-side 60s linear infinite;
+    overflow-y: visible;
+    padding-inline: 2rem;
+    padding: 1.5rem 0;
+  }
+
+  @keyframes scroll-side {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-100%);
+    }
+  }
+</style>

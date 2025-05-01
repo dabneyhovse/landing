@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@theme {
+    /* these colors are actually all really dark */
+    --color-darb-400: oklch(0.48 0.0891 148);
+    --color-darb-500: oklch(0.39 0.0851 148);
+    --color-darb-600: oklch(0.35 0.0831 148);
+    --color-darb-700: oklch(0.32 0.0801 148);
+    --color-darb-800: oklch(0.27 0.0671 148);
+    --color-darb-900: oklch(0.25 0.058 148);
+
+    --color-cream-text: oklch(0.98 0.02 111.15);
+    --color-cream-100: oklch(0.98 0.0682 111.15);
+
+    --text-2xl--line-height: 1.61;
+}
