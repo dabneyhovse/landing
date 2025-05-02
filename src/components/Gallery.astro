@@ -12,15 +12,41 @@ const images = Object.values(
 const rot = () => (Math.random() + 1) * (Math.random() > 0.5 ? 1 : -1);
 ---
 
+<dialog
+  id="image-dialog"
+  class="max-h-screen max-w-screen bg-black/50 h-full w-full"
+>
+  <button id="image-dialog-close" class="absolute top-4 left-4 text-cream-100"
+    ><svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke-width="1.5"
+      stroke="currentColor"
+      class="size-6"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M6 18 18 6M6 6l12 12"></path>
+    </svg>
+  </button>
+  <div class="grid justify-center items-center h-full w-full">
+    <img src="" class="w-7/8 lg:w-auto lg:h-11/12 m-auto rounded-2xl" />
+  </div>
+</dialog>
 <section id="gallery">
   <h2
-    class="text-cream-100 font-bold text-7xl text-balance rotate-[1deg] mb-8 z-10 text-center"
+    class="w-fit m-auto text-cream-100 font-bold text-5xl lg:text-7xl text-balance rotate-[1deg] mb-8 z-10 text-center"
   >
     Gallery
   </h2>
 
-  <div class="grid grid-cols-3 mx-16 gap-6">
-    <div class="flex flex-col gap-6">
+  <div
+    id="gallery-expand"
+    class="grid grid-cols-3 mx-4 lg:mx-16 gap-2 lg:gap-6 expandable"
+  >
+    <div class="flex flex-col gap-2 lg:gap-6">
       {
         images
           .filter((_, i) => i % 3 == 0)
@@ -28,13 +54,14 @@ const rot = () => (Math.random() + 1) * (Math.random() > 0.5 ? 1 : -1);
             <Image
               src={fn()}
               alt=""
-              class="w-full rounded-xl"
+              loading="lazy"
+              class="w-full rounded-xl gallery-image"
               style={`rotate: ${rot()}deg`}
             />
           ))
       }
     </div>
-    <div class="flex flex-col gap-8">
+    <div class="flex flex-col gap-2 lg:gap-6">
       {
         images
           .filter((_, i) => i % 3 == 1)
@@ -42,13 +69,14 @@ const rot = () => (Math.random() + 1) * (Math.random() > 0.5 ? 1 : -1);
             <Image
               src={fn()}
               alt=""
-              class="w-full rounded-xl"
+              loading="lazy"
+              class="w-full rounded-xl gallery-image"
               style={`rotate: ${rot()}deg`}
             />
           ))
       }
     </div>
-    <div class="flex flex-col gap-8">
+    <div class="flex flex-col gap-2 lg:gap-6">
       {
         images
           .filter((_, i) => i % 3 == 2)
@@ -56,11 +84,60 @@ const rot = () => (Math.random() + 1) * (Math.random() > 0.5 ? 1 : -1);
             <Image
               src={fn()}
               alt=""
-              class="w-full rounded-xl"
+              loading="lazy"
+              class="w-full rounded-xl gallery-image"
               style={`rotate: ${rot()}deg`}
             />
           ))
       }
     </div>
   </div>
+  <button
+    class="text-center underline decoration-2 w-full cursor-pointer"
+    onclick="document.getElementById('gallery-expand').classList.remove('expandable'); this.remove()"
+  >
+    Show All
+  </button>
 </section>
+<script>
+  const dialog: HTMLDialogElement = document.getElementById(
+    "image-dialog"
+  ) as HTMLDialogElement;
+  // const rot = () => (Math.random() + 1) * (Math.random() > 0.5 ? 1 : -1);
+
+  const showImage = (ele: HTMLImageElement) => {
+    const imgEle = dialog.querySelector("img");
+    if (!imgEle) return;
+
+    imgEle.src = ele.src;
+    imgEle.style.rotate = ele.style.rotate;
+    dialog.showModal();
+  };
+
+  const imgs = document.querySelectorAll(".gallery-image");
+  imgs.forEach((img) => {
+    img.addEventListener("click", () => showImage(img as HTMLImageElement));
+  });
+
+  document
+    .getElementById("image-dialog")
+    ?.addEventListener("click", (e) =>
+      (e.target as HTMLElement).tagName == "IMG" ? null : dialog.close()
+    );
+</script>
+
+<style>
+  :global(::backdrop) {
+    background-image: rgba(0, 0, 0, 1);
+  }
+
+  .expandable {
+    height: 64rem;
+    mask-image: linear-gradient(to bottom, #fff 60%, transparent 100%);
+    overflow: hidden;
+  }
+
+  .gallery-image {
+    cursor: pointer;
+  }
+</style>

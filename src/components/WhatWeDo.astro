@@ -9,11 +9,11 @@ const rotations = Array(events.length)
 
 <section class="max-w-[65ch] m-auto">
   <h2
-    class="text-cream-100 font-bold text-7xl text-balance rotate-[1.5deg] mb-8 z-10 text-center"
+    class="text-cream-100 font-bold text-5xl lg:text-7xl text-balance rotate-[1.5deg] mb-8 z-10 text-center"
   >
     What We Do
   </h2>
-  <div class="flex flex-col gap-8">
+  <div class="flex flex-col gap-8 mx-4">
     <p>
       Welcome to Dabney! Here, you can usually find people doing sets in the
       gazebo or library and hanging out in the lounge, talking or screening
@@ -53,11 +53,16 @@ const rotations = Array(events.length)
 <style>
   .track {
     display: flex;
-    gap: 4rem;
     align-items: center;
-    animation: scroll-side 60s linear infinite;
+    gap: 1.5rem;
+    padding-inline: 0.75rem;
+    animation: scroll-side 30s linear infinite;
+    @media (width >= 48rem /* 1024px */) {
+      animation: scroll-side 60s linear infinite;
+      padding-inline: 2rem;
+      gap: 4rem;
+    }
     overflow-y: visible;
-    padding-inline: 2rem;
     padding: 1.5rem 0;
   }
 
