@@ -1,20 +1,19 @@
-name: Build and Push Container
+name: Build Astro & publish Nginx image
 
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: landing
+  IMAGE_NAME: astro-nginx
 
 jobs:
-  build:
+  build-site:
+    name: Build Astro
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -36,10 +35,36 @@ jobs:
       - name: Build Astro site
         run: pnpm run build
 
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: astro-dist
+          path: dist
+          retention-days: 7 # keep artifacts for a week
+
+  container:
+    name: Build & push Nginx image
+    needs: build-site
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repo (for nginx.conf and metadata)
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: astro-dist
+          path: dist
+
       - name: Prepare Docker context
         run: |
           mkdir docker-context
-          cp -r dist docker-context/
+          mv dist docker-context/
+          cp nginx/nginx.conf docker-context/
           cat <<'EOF' > docker-context/Dockerfile
           FROM nginx:alpine
           COPY dist/ /usr/share/nginx/html
