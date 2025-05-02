@@ -12,7 +12,7 @@ env:
 
 jobs:
   build-site:
-    name: Build Astro
+    name: Build Site
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source
@@ -38,10 +38,9 @@ jobs:
         with:
           name: astro-dist
           path: dist
-          retention-days: 7 # keep artifacts for a week
 
   container:
-    name: Build & push Nginx image
+    name: Build & push image
     needs: build-site
     runs-on: ubuntu-latest
     permissions:
@@ -49,7 +48,7 @@ jobs:
       packages: write
 
     steps:
-      - name: Checkout repo (for nginx.conf and metadata)
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Download build artifact
