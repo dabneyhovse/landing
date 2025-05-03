@@ -4,14 +4,18 @@ import crest from "../assets/crest.svg";
 import tpose from "../assets/gallery/t_pose.jpg";
 ---
 
-<section class="grid grid-rows-[3fr_2fr] lg:grid-cols-2 h-screen">
-  <div class="h-0 min-h-full lg:h-screen grid justify-center items-center">
+<section
+  class="lg:grid gap-16 lg:grid-cols-2 lg:gap-0 lg:h-screen"
+>
+  <div class="h-[75vh] lg:h-screen grid justify-center items-center">
     <div
       class="h-0 min-h-full m-auto pointer-events-none col-start-1 row-start-1 grid justify-center items-center"
     >
       <Image src={crest} alt="dabney crest" class="h-1/2 lg:h-7/8" />
     </div>
-    <div class="flex flex-col justify-center px-4 lg:px-20 col-start-1 row-start-1 max-w-[65ch] lg:max-w-none">
+    <div
+      class="flex flex-col justify-center px-4 lg:px-20 col-start-1 row-start-1 max-w-[65ch] lg:max-w-none"
+    >
       <h1
         class="text-cream-100 font-bold text-5xl lg:text-7xl text-balance -rotate-[2deg] mb-8 z-10"
       >
@@ -54,10 +58,10 @@ import tpose from "../assets/gallery/t_pose.jpg";
       </div>
     </div>
   </div>
-  <div class="h-0 min-h-full lg:h-screen w-full flex items-center justify-center">
+  <div class="lg:h-screen w-full flex items-center justify-center">
     <Image
       src={tpose}
-      class="h-7/8 w-11/12  object-cover rounded-2xl rotate-[1.5deg]"
+      class="h-3/4 lg:h-7/8 w-11/12 object-cover rounded-2xl rotate-[1.5deg]"
       alt="a group of darbs t-posing"
     />
   </div>
