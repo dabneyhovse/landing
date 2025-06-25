@@ -16,6 +16,12 @@ export default defineConfig({
         cssVariable: "--font-lexend",
         weights: [400, 700]
       },
+      {
+        provider: fontProviders.google(),
+        name: "Doto",
+        cssVariable: "--font-doto",
+        weights: [700, 900]
+      },
     ],
   },
 });

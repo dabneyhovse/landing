@@ -1,0 +1,26 @@
+---
+import CafeHero from "../components/CafeHero.astro";
+import Footer from "../components/Footer.astro";
+
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <div
+    class="flex flex-col gap-24 bg-darb-700 opacity-95 min-h-screen font-doto text-cream-text lg:text-2xl"
+  >
+    <CafeHero />
+    <Footer />
+  </div>
+</Layout>
+
+<style>
+  .font-doto {
+    font-family: var(--font-doto);
+  }
+
+  /* .crt { */
+  /* color: #00ff00; */
+  /* text-shadow: 0 0 10px #00ff00; */
+  /* } */
+</style>
