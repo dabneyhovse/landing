@@ -1,0 +1,64 @@
+---
+import events from "../../data/events.json";
+import Event from "./Event.astro";
+
+const rotations = Array(events.length)
+  .fill(null)
+  .map((_, i) => (i % 2 ? -1 : 1) * 1.5 + Math.random() * 0.5);
+---
+
+<section class="max-w-[65ch] m-auto">
+  <h2 class="font-bold text-5xl lg:text-7xl text-balance mb-8 z-10 text-center">
+    What We Do
+  </h2>
+  <div class="flex flex-col gap-8 mx-4">
+    <p>
+      Welcome to Dabney! Here, you can usually find darbs doing sets, talking,
+      or screening movies in the gazebo, library and lounge.
+    </p>
+    <p>
+      We have a massive collection of board games and a large pile of squashy
+      objects in the lounge, called the bear pit.
+    </p>
+    <p>
+      We hold some other large events, including the Pumpkin Drop, our
+      Interhouse party, and star-watching at Joshua Tree!
+    </p>
+  </div>
+</section>
+<section>
+  <div class="flex overflow-x-hidden">
+    <div class="track">
+      {events.map((props, i) => <Event {...props} rotation={rotations[i]} />)}
+    </div>
+    <div class="track">
+      {events.map((props, i) => <Event {...props} rotation={rotations[i]} />)}
+    </div>
+  </div>
+</section>
+
+<style>
+  .track {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-right: 1.5rem;
+    animation: scroll-side 30s linear infinite;
+    @media (width >= 48rem /* 1024px */) {
+      animation: scroll-side 60s linear infinite;
+      margin-right: 4rem;
+      gap: 4rem;
+    }
+    overflow-y: visible;
+    padding: 1.5rem 0;
+  }
+
+  @keyframes scroll-side {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-100%);
+    }
+  }
+</style>

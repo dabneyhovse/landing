@@ -1,0 +1,57 @@
+---
+import { Image } from "astro:assets";
+import crest from "../../assets/crest.svg";
+import SidePhoto from "../../assets/gallery/Ski Trip.jpg";
+import ImageCard from "@/components/ui/image-card";
+
+import { Button } from "../ui/button";
+import Marquee from "../ui/marquee";
+---
+
+<div class="absolute top-0 left-0 w-full z-20">
+  <Marquee
+    items={[
+      "Alright that's it, I'm freaking done. I'm dropping my Dabney membership. I have tried so hard for the past year I've been a social member to be civil, supportive, and helpful, but I'm done paying dues so that I can read this sort of crap.",
+    ]}
+  />
+</div>
+
+<section class="lg:grid gap-16 lg:grid-cols-2 lg:gap-0 lg:h-screen pt-24">
+  <div class="h-[75vh] lg:h-screen grid justify-center items-center">
+    <!-- <div
+      class="h-0 min-h-full m-auto pointer-events-none col-start-1 row-start-1 grid justify-center items-center"
+    >
+      <Image src={crest} alt="dabney crest" class="h-1/2 lg:h-7/8" />
+    </div> -->
+    <div
+      class="flex flex-col justify-center px-4 lg:px-20 col-start-1 row-start-1 max-w-[65ch] lg:max-w-none"
+    >
+      <h1 class="font-bold text-5xl lg:text-7xl text-balance mb-4 z-10">
+        Welcome to Dabney House!
+      </h1>
+      <p class="z-10 mb-4">
+        Surviving Caltech isn't always easy. Sometimes you just need to have a
+        good laugh.
+      </p>
+      <div class="lg:grid-cols-3 text-lg flex gap-4">
+        <a href="#social-calendar">
+          <Button>Social Calendar</Button>
+        </a>
+        <a href="#gallery">
+          <Button>Gallery</Button>
+        </a>
+        <a href="https://wiki.dabney.house">
+          <Button>Wiki</Button>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="lg:h-screen w-full flex items-center justify-center">
+    <ImageCard imageUrl={SidePhoto.src} className="h-3/4 lg:h-61/90 w-11/12">
+      <p>
+        Our current motto is:
+        <span class="bg-black"> made you look</span>
+      </p>
+    </ImageCard>
+  </div>
+</section>

@@ -1,9 +1,9 @@
 ---
-import Footer from "../components/Footer.astro";
-import Gallery from "../components/Gallery.astro";
-import Hero from "../components/Hero.astro";
-import SocialCalendar from "../components/SocialCalendar.astro";
-import WhatWeDo from "../components/WhatWeDo.astro";
+import Footer from "../components/brutal/Footer.astro";
+import Gallery from "../components/brutal/Gallery.astro";
+import Hero from "../components/brutal/Hero.astro";
+import SocialCalendar from "../components/brutal/SocialCalendar.astro";
+import WhatWeDo from "../components/brutal/WhatWeDo.astro";
 
 import Layout from "../layouts/Layout.astro";
 
@@ -12,9 +12,7 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout>
-  <div
-    class="flex flex-col gap-24 bg-darb-700 opacity-90 min-h-screen font-lexend text-cream-text lg:text-2xl"
-  >
+  <div class="flex flex-col gap-24min-h-screen font-dmsans">
     <Hero />
     <WhatWeDo />
     <SocialCalendar />
@@ -24,7 +22,13 @@ import Layout from "../layouts/Layout.astro";
 </Layout>
 
 <style>
-  .font-lexend {
-    font-family: var(--font-lexend);
+  body {
+    background: linear-gradient(90deg, #80808033 1px, #0000 0),
+      linear-gradient(#80808033 1px, #0000 0);
+    background-size: 70px 70px;
+    background-color: var(--background);
+  }
+  .font-dmsans {
+    font-family: var(--font-dmsans);
   }
 </style>
