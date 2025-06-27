@@ -4,29 +4,33 @@ import Curve from "../../assets/curve.svg";
 ---
 
 <footer id="other-links">
-  <Image
+  <!-- <Image
     src={Curve}
     class="translate-y-0.5 pointer-events-none w-full"
     alt=""
-  />
+  /> -->
   <div
-    class="bg-darb-900 p-16 pt-16 lg:pt-4 flex lg:flex-row lg:min-h-auto min-h-96 flex-col justify-between"
+    class="bg-main rounded-base border-2 border-border shadow-shadow p-8 m-4 lg:m-8"
   >
-    <div class="-rotate-[1.5deg]">
-      <h2 class="text-cream-100 font-bold text-4xl lg:text-5xl mb-1 lg:mb-3">
-        Dabney House
-      </h2>
-      <h3 class="leading-tight">1313 E California Blvd</h3>
-      <h3 class="leading-tight">contact@dabney.caltech.edu</h3>
-    </div>
     <div
-      class="grid grid-cols-2 gap-x-8 [&_a]:text-darb-400 [&_a]:underline [&_a]:decoration-2"
+      class="flex lg:flex-row lg:min-h-auto min-h-96 flex-col justify-between"
     >
-      <div><a href="https://wiki.dabney.house">wiki</a></div>
-      <div><a href="https://containers.dabney.house">containers</a></div>
-      <div><a href="https://idm.dabney.house">idm</a></div>
-      <div><a href="https://router.dabney.house">router</a></div>
-      <div><a href="https://kvm.dabney.house">kvm</a></div>
+      <div>
+        <h2 class="font-bold text-4xl lg:text-5xl mb-1 lg:mb-3">
+          Dabney House
+        </h2>
+        <h3 class="leading-tight">1313 E California Blvd</h3>
+        <h3 class="leading-tight">contact@dabney.caltech.edu</h3>
+      </div>
+      <div
+        class="grid grid-cols-2 gap-x-8 [&_a]:text-darb-400 [&_a]:underline [&_a]:decoration-2"
+      >
+        <div><a href="https://wiki.dabney.house">wiki</a></div>
+        <div><a href="https://containers.dabney.house">containers</a></div>
+        <div><a href="https://idm.dabney.house">idm</a></div>
+        <div><a href="https://router.dabney.house">router</a></div>
+        <div><a href="https://kvm.dabney.house">kvm</a></div>
+      </div>
     </div>
   </div>
 </footer>

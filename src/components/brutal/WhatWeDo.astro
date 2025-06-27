@@ -1,6 +1,7 @@
 ---
 import events from "../../data/events.json";
 import Event from "./Event.astro";
+import AccordionGroup from "./accordionGroup";
 
 const rotations = Array(events.length)
   .fill(null)
@@ -11,20 +12,7 @@ const rotations = Array(events.length)
   <h2 class="font-bold text-5xl lg:text-7xl text-balance mb-8 z-10 text-center">
     What We Do
   </h2>
-  <div class="flex flex-col gap-8 mx-4">
-    <p>
-      Welcome to Dabney! Here, you can usually find darbs doing sets, talking,
-      or screening movies in the gazebo, library and lounge.
-    </p>
-    <p>
-      We have a massive collection of board games and a large pile of squashy
-      objects in the lounge, called the bear pit.
-    </p>
-    <p>
-      We hold some other large events, including the Pumpkin Drop, our
-      Interhouse party, and star-watching at Joshua Tree!
-    </p>
-  </div>
+  <AccordionGroup client:load />
 </section>
 <section>
   <div class="flex overflow-x-hidden">

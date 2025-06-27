@@ -16,7 +16,7 @@ const rot = () => (Math.random() + 1) * (Math.random() > 0.5 ? 1 : -1);
   id="image-dialog"
   class="max-h-screen max-w-screen bg-black/50 h-full w-full"
 >
-  <button id="image-dialog-close" class="absolute top-4 left-4 text-cream-100"
+  <button id="image-dialog-close" class="absolute top-4 left-4"
     ><svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -32,12 +32,12 @@ const rot = () => (Math.random() + 1) * (Math.random() > 0.5 ? 1 : -1);
     </svg>
   </button>
   <div class="grid justify-center items-center h-full w-full">
-    <img src="" class="w-7/8 lg:w-auto lg:h-11/12 m-auto rounded-2xl" />
+    <img src="" class="w-7/8 lg:w-auto lg:h-11/12 m-auto" />
   </div>
 </dialog>
 <section id="gallery">
   <h2
-    class="w-fit m-auto text-cream-100 font-bold text-5xl lg:text-7xl text-balance rotate-[1deg] mb-8 z-10 text-center"
+    class="w-fit m-auto font-bold text-5xl lg:text-7xl text-balance mb-8 z-10 text-center"
   >
     Gallery
   </h2>
@@ -55,8 +55,7 @@ const rot = () => (Math.random() + 1) * (Math.random() > 0.5 ? 1 : -1);
               src={fn()}
               alt=""
               loading="lazy"
-              class="w-full rounded-xl gallery-image"
-              style={`rotate: ${rot()}deg`}
+              class="w-full gallery-image"
             />
           ))
       }
@@ -70,8 +69,7 @@ const rot = () => (Math.random() + 1) * (Math.random() > 0.5 ? 1 : -1);
               src={fn()}
               alt=""
               loading="lazy"
-              class="w-full rounded-xl gallery-image"
-              style={`rotate: ${rot()}deg`}
+              class="w-full gallery-image"
             />
           ))
       }
@@ -85,8 +83,7 @@ const rot = () => (Math.random() + 1) * (Math.random() > 0.5 ? 1 : -1);
               src={fn()}
               alt=""
               loading="lazy"
-              class="w-full rounded-xl gallery-image"
-              style={`rotate: ${rot()}deg`}
+              class="w-full gallery-image"
             />
           ))
       }
@@ -110,7 +107,6 @@ const rot = () => (Math.random() + 1) * (Math.random() > 0.5 ? 1 : -1);
     if (!imgEle) return;
 
     imgEle.src = ele.src;
-    imgEle.style.rotate = ele.style.rotate;
     dialog.showModal();
   };
 
