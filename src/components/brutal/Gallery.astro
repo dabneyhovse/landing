@@ -14,9 +14,11 @@ const rot = () => (Math.random() + 1) * (Math.random() > 0.5 ? 1 : -1);
 
 <dialog
   id="image-dialog"
-  class="max-h-screen max-w-screen bg-black/50 h-full w-full"
+  class="max-h-screen max-w-screen bg-black/80 h-full w-full backdrop-blur-sm"
 >
-  <button id="image-dialog-close" class="absolute top-4 left-4"
+  <button
+    id="image-dialog-close"
+    class="absolute top-4 left-4 text-white hover:text-gray-300 transition-colors"
     ><svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -31,21 +33,21 @@ const rot = () => (Math.random() + 1) * (Math.random() > 0.5 ? 1 : -1);
         d="M6 18 18 6M6 6l12 12"></path>
     </svg>
   </button>
-  <div class="grid justify-center items-center h-full w-full">
-    <img src="" class="w-7/8 lg:w-auto lg:h-11/12 m-auto" />
+  <div class="grid justify-center items-center h-full w-full p-4">
+    <img
+      src=""
+      class="w-full lg:w-auto lg:h-11/12 m-auto rounded-base max-w-full max-h-full object-contain"
+    />
   </div>
 </dialog>
-<section id="gallery">
+<section id="gallery" class="w-full px-4 lg:px-8 max-w-screen-lg mx-auto">
   <h2
     class="w-fit m-auto font-bold text-5xl lg:text-7xl text-balance mb-8 z-10 text-center"
   >
     Gallery
   </h2>
 
-  <div
-    id="gallery-expand"
-    class="grid grid-cols-3 mx-4 lg:mx-16 gap-2 lg:gap-6 expandable"
-  >
+  <div id="gallery-expand" class="grid grid-cols-3 gap-2 lg:gap-6 expandable">
     <div class="flex flex-col gap-2 lg:gap-6">
       {
         images
@@ -90,7 +92,7 @@ const rot = () => (Math.random() + 1) * (Math.random() > 0.5 ? 1 : -1);
     </div>
   </div>
   <button
-    class="text-center underline decoration-2 w-full cursor-pointer"
+    class="w-full mt-6 bg-main text-main-foreground font-base border-2 border-border shadow-shadow rounded-base p-4 hover:bg-main/90 transition-colors cursor-pointer"
     onclick="document.getElementById('gallery-expand').classList.remove('expandable'); this.remove()"
   >
     Show All
@@ -124,7 +126,8 @@ const rot = () => (Math.random() + 1) * (Math.random() > 0.5 ? 1 : -1);
 
 <style>
   :global(::backdrop) {
-    background-image: rgba(0, 0, 0, 1);
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(4px);
   }
 
   .expandable {
@@ -135,5 +138,10 @@ const rot = () => (Math.random() + 1) * (Math.random() > 0.5 ? 1 : -1);
 
   .gallery-image {
     cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .gallery-image:hover {
+    transform: scale(1.02);
   }
 </style>
