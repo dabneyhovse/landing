@@ -43,7 +43,7 @@ export default function AccordionGroup() {
             We hold some other large events, including the Pumpkin Drop, where
             we drop LN2 frozen pumpkins from the roof of the Caltech Hall to the
             sound of the 1812 Overture, our yearly Interhouse (a themed party),
-            and a visit to Joshua Tree to watch the stars! In addition to these
+            and the house retreat! In addition to these
             large events we also plan smaller weekly social events at the start
             of each new term.
           </AccordionContent>
