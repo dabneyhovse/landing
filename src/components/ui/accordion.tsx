@@ -19,7 +19,7 @@ function AccordionItem({
     <AccordionPrimitive.Item
       data-slot="accordion-item"
       className={cn(
-        "rounded-base overflow-hidden border-2 border-border shadow-shadow",
+        "rounded-base overflow-hidden shadow-shadow",
         className,
       )}
       {...props}

@@ -20,7 +20,7 @@ export const POST: APIRoute = async (ctx) => {
     if (comment.anon) {
       comment.dataValues.from = {
         picture: "/resources/images/defaultProfile.png",
-        preferred_username: "amogus",
+        preferred_username: "",
       };
     } else {
       comment.dataValues.from = {

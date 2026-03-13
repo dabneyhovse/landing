@@ -84,7 +84,7 @@ export default function FlashcardView({ navigate }: Props) {
         <ArrowLeft className="size-4" /> Back
       </Button>
 
-      <div className="mb-4 flex items-center gap-3">
+      <div className="mb-4 flex items-center justify-center gap-3">
         <Select
           value={dinnerGroup}
           onValueChange={(v) => {
@@ -92,7 +92,7 @@ export default function FlashcardView({ navigate }: Props) {
             doFetch(v);
           }}
         >
-          <SelectTrigger className="w-40">
+          <SelectTrigger className="w-40 border-current bg-background">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -113,7 +113,7 @@ export default function FlashcardView({ navigate }: Props) {
 
       {frosh ? (
         <div
-          className="mx-auto mb-4 w-full max-w-md cursor-pointer"
+          className="mx-auto mb-4 w-full max-w-xl cursor-pointer"
           style={{ perspective: "1000px" }}
           onClick={() => setFlipped((f) => !f)}
         >
@@ -126,7 +126,7 @@ export default function FlashcardView({ navigate }: Props) {
           >
             {/* Front */}
             <div
-              className="rounded-base border-2 border-border shadow-shadow"
+              className="rounded-base border-4 border-border shadow-shadow"
               style={{ backfaceVisibility: "hidden" }}
             >
               <div
@@ -137,7 +137,7 @@ export default function FlashcardView({ navigate }: Props) {
 
             {/* Back */}
             <div
-              className="absolute inset-0 flex flex-col items-center justify-center rounded-base border-2 border-border bg-secondary-background p-6 shadow-shadow"
+              className="absolute inset-0 flex flex-col items-center justify-center rounded-base border-4 border-border bg-secondary-background p-6 shadow-shadow"
               style={{
                 backfaceVisibility: "hidden",
                 transform: "rotateY(180deg)",
@@ -160,10 +160,10 @@ export default function FlashcardView({ navigate }: Props) {
       )}
 
       <div className="flex justify-center gap-3">
-        <Button variant="outline" onClick={goPrev}>
+        <Button variant="outline" className="w-28" onClick={goPrev}>
           <ChevronLeft className="size-4" /> Previous
         </Button>
-        <Button variant="outline" onClick={goNext}>
+        <Button variant="outline" className="w-28" onClick={goNext}>
           Next <ChevronRight className="size-4" />
         </Button>
       </div>

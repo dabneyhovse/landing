@@ -17,8 +17,8 @@ export const GET: APIRoute = async (ctx) => {
       if (comments[i].anon) {
         comments[i].dataValues.from = {
           picture: "/resources/images/defaultProfile.png",
-          name: "amogus",
-          username: "amogus",
+          name: "",
+          username: "",
         };
       } else {
         const profile = await fetchUserProfile(comments[i].userId);

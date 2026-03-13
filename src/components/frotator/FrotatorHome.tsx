@@ -99,7 +99,7 @@ export default function FrotatorHome({ navigate, user }: Props) {
 
       {(user.roles.includes("frotator-bigbad") ||
         user.roles.includes("frotator-admin")) && (
-        <div className="mt-6 grid gap-4 sm:grid-cols-1 md:grid-cols-2">
+        <div className="mt-4 grid gap-4 sm:grid-cols-1 md:grid-cols-2">
           {user.roles.includes("frotator-bigbad") && (
             <Card
               role="button"

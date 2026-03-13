@@ -4,8 +4,6 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -19,9 +17,9 @@ import { ArrowLeft, Send } from "lucide-react";
 import type { Route } from "./FrotatorApp";
 
 interface SpamMessage {
-  id: number;
   text: string;
-  from: { username: string };
+  name: string;
+  timestamp: number;
 }
 
 interface Props {
@@ -57,17 +55,15 @@ export default function SpamPage({ navigate, user }: Props) {
 
   const handleSend = async () => {
     if (!newMessage.trim()) return;
-    const msg = {
+    const msg: SpamMessage = {
       text: newMessage,
-      from: { username: user.preferred_username },
+      name: user.preferred_username,
+      timestamp: Date.now(),
     };
     setNewMessage("");
-    setMessages((prev) => [
-      ...prev,
-      { ...msg, id: Date.now() },
-    ]);
+    setMessages((prev) => [...prev, msg]);
     try {
-      await postSpam(msg);
+      await postSpam({ text: msg.text });
     } catch {
       toast.error("Failed to send spam");
     }
@@ -87,17 +83,14 @@ export default function SpamPage({ navigate, user }: Props) {
       <h1 className="mb-4 text-3xl font-heading text-center">Spam</h1>
 
       <Card className="mx-auto max-w-2xl py-4 gap-2">
-        <CardHeader>
-          <CardTitle>Messages</CardTitle>
-        </CardHeader>
         <CardContent>
           <div className="max-h-96 space-y-1 overflow-y-auto">
-            {messages.map((msg) => (
-              <div key={msg.id}>
+            {messages.map((msg, idx) => (
+              <div key={msg.timestamp ?? idx}>
                 <div className="flex gap-3 py-2">
                   <div>
                     <p className="text-xs font-heading">
-                      {msg.from.username}
+                      {msg.name}
                     </p>
                     {msg.text.split("\n").map((line, i) => (
                       <p key={i} className="mb-0 text-sm">

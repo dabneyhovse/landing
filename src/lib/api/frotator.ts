@@ -146,15 +146,12 @@ export async function deleteFrosh(): Promise<void> {
 }
 
 export async function fetchSpam(): Promise<
-  { id: number; text: string; from: { username: string } }[]
+  { text: string; name: string; timestamp: number }[]
 > {
   return apiFetch("/spam");
 }
 
-export async function postSpam(message: {
-  text: string;
-  from: { username: string };
-}): Promise<void> {
+export async function postSpam(message: { text: string }): Promise<void> {
   await apiFetch("/spam", {
     method: "POST",
     body: JSON.stringify(message),
