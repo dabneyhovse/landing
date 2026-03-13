@@ -119,7 +119,7 @@ export default function FroshListPage({ navigate, user }: Props) {
               onChange={(v) => updateField("sort", v)}
               showAdvanced={hasAdvSort}
             />
-            <Card>
+            <Card className="py-4 gap-2">
               <CardHeader>
                 <CardTitle className="text-sm">Prefr*sh Bio Info</CardTitle>
               </CardHeader>
