@@ -10,7 +10,8 @@ export async function apiFetch<T>(
     headers: { "Content-Type": "application/json", ...options?.headers },
   });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
-  return res.json();
+  const text = await res.text();
+  return text ? JSON.parse(text) : (undefined as T);
 }
 
 export interface FroshBio {
@@ -131,8 +132,8 @@ export async function uploadCsv(
   method: "POST" | "PUT" = "POST",
 ): Promise<void> {
   const formData = new FormData();
-  formData.append("file", file);
-  const res = await fetch(`${API_BASE}/frosh/upload`, {
+  formData.append("csv-file", file);
+  const res = await fetch(`${API_BASE}/frosh`, {
     method,
     credentials: "same-origin",
     body: formData,

@@ -29,7 +29,7 @@ const DINNER_GROUPS = [
 
 export default function FlashcardView({ navigate }: Props) {
   const { cards, fetchCards } = useFroshStore();
-  const filteredCards = cards.filter((f) => f.image !== null);
+  const filteredCards = cards.filter((f) => f.image?.trim());
 
   const [dinnerGroup, setDinnerGroup] = useState("any");
   const [current, setCurrent] = useState(0);

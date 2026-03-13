@@ -8,18 +8,18 @@ interface Props {
 export default function FroshCard({ frosh, onClick }: Props) {
   return (
     <div
-      className="cursor-pointer overflow-hidden rounded-base border-2 border-border shadow-shadow transition-transform hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none"
+      className="cursor-pointer overflow-hidden rounded-base border-2 border-border shadow-shadow transition-all hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none hover:brightness-110"
       onClick={onClick}
     >
       <div
         className="aspect-square w-full bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: frosh.image
+          backgroundImage: frosh.image?.trim()
             ? `url(${frosh.image})`
             : undefined,
         }}
       >
-        {!frosh.image && (
+        {!frosh.image?.trim() && (
           <div className="flex size-full items-center justify-center bg-secondary-background text-4xl text-foreground/30">
             ?
           </div>

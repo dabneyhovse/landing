@@ -104,7 +104,7 @@ export default function FroshDetail({ froshId, navigate, goBack, user }: Props) 
         {/* Profile card */}
         <Card>
           <CardContent className="flex flex-col items-center gap-4 p-6">
-            {frosh.image ? (
+            {frosh.image?.trim() ? (
               <img
                 src={frosh.image}
                 alt={frosh.displayName}
