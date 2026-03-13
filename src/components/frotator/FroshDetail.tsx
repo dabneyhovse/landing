@@ -76,7 +76,7 @@ export default function FroshDetail({ froshId, navigate, goBack, user }: Props) 
     { label: "Intended major", value: frosh.bio.major },
     { label: "Hobbies", value: frosh.bio.hobbies },
     { label: "Clubs they might join", value: frosh.bio.clubs },
-    { label: "Funfact", value: frosh.bio.funfact },
+    { label: "Fun Fact", value: frosh.bio.funfact },
   ];
 
   return (
@@ -131,7 +131,7 @@ export default function FroshDetail({ froshId, navigate, goBack, user }: Props) 
               <Heart
                 className={`size-4 ${frosh.favorite ? "fill-current" : ""}`}
               />
-              {frosh.favorite ? "Unfavorite" : "Favorite"} this prefr*sh
+              {frosh.favorite ? "Unfavorite" : "Favorite"} this prefrosh
             </Button>
           </CardContent>
         </Card>
@@ -180,7 +180,7 @@ export default function FroshDetail({ froshId, navigate, goBack, user }: Props) 
                   {user.name?.[0]?.toUpperCase() ?? "?"}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex-1 space-y-2">
+              <div className="flex-1 space-y-3">
                 <Textarea
                   placeholder="Write a comment..."
                   rows={3}

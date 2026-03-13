@@ -30,11 +30,18 @@
     --color-darb-500: oklch(0.39 0.0851 148);
     --color-darb-600: oklch(0.35 0.0831 148);
     --color-darb-700: oklch(0.32 0.0801 148);
+    --color-darb-750: oklch(0.295 0.0736 148);
     --color-darb-800: oklch(0.27 0.0671 148);
     --color-darb-900: oklch(0.25 0.058 148);
 
     --color-cream-text: oklch(0.98 0.02 111.15);
     --color-cream-100: oklch(0.98 0.0682 111.15);
+
+    /* Gold accent palette — from dabney_crest.svg (#ffcc00), high chroma */
+    --color-gold-300: oklch(0.87 0.19 93);
+    --color-gold-400: oklch(0.82 0.19 93);
+    --color-gold-500: oklch(0.72 0.17 93);
+    --color-gold-600: oklch(0.60 0.15 93);
 
     --text-2xl--line-height: 1.61;
 }
@@ -47,9 +54,9 @@
   --secondary-background: oklch(0.27 0.0671 148);
   --foreground: oklch(0.98 0.02 111.15);
   --main-foreground: oklch(0.98 0.02 111.15);
-  --main: oklch(0.48 0.0891 148);
-  --border: oklch(0.48 0.0891 148 / 0.25);
-  --ring: oklch(0.48 0.0891 148);
+  --main: oklch(0.27 0.0671 148);
+  --border: oklch(0.82 0.19 93 / 0.85);
+  --ring: oklch(0.82 0.19 93);
   --overlay: oklch(0 0 0 / 0.6);
   --shadow: none;
 
@@ -60,7 +67,7 @@
   --secondary-foreground: oklch(0.98 0.02 111.15);
   --muted: oklch(0.35 0.0831 148);
   --muted-foreground: oklch(0.98 0.02 111.15 / 0.6);
-  --accent: oklch(0.39 0.0851 148);
+  --accent: oklch(0.40 0.09 148);
   --accent-foreground: oklch(0.98 0.02 111.15);
   --destructive: oklch(0.55 0.2 27);
   --input: oklch(0.48 0.0891 148 / 0.4);

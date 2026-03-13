@@ -22,7 +22,7 @@ function handleCardKeyDown(e: KeyboardEvent, action: () => void) {
 
 const NAV_CARDS = [
   {
-    title: "Prefro*h List",
+    title: "Prefrosh List",
     description: "A simple list of all the prefrosh",
     icon: Users,
     route: { page: "frosh-list" } as Route,
@@ -97,46 +97,51 @@ export default function FrotatorHome({ navigate, user }: Props) {
         ))}
       </div>
 
-      {user.roles.includes("frotator-admin") && (
+      {(user.roles.includes("frotator-bigbad") ||
+        user.roles.includes("frotator-admin")) && (
         <div className="mt-6 grid gap-4 sm:grid-cols-1 md:grid-cols-2">
-          <Card
-            role="button"
-            tabIndex={0}
-            className="cursor-pointer py-4 transition-all hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none hover:brightness-110"
-            onClick={() => navigate({ page: "bigbad" })}
-            onKeyDown={(e) =>
-              handleCardKeyDown(e, () => navigate({ page: "bigbad" }))
-            }
-          >
-            <CardHeader className="my-auto">
-              <div className="flex items-center gap-3">
-                <ListOrdered className="size-6 shrink-0" />
-                <div>
-                  <CardTitle className="text-lg">Big Bad List</CardTitle>
-                  <CardDescription className="mt-1">Rank your favorite frosh</CardDescription>
+          {user.roles.includes("frotator-bigbad") && (
+            <Card
+              role="button"
+              tabIndex={0}
+              className={`cursor-pointer py-4 transition-all hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none hover:brightness-110${!user.roles.includes("frotator-admin") ? " md:col-start-1 md:col-end-3 md:mx-auto md:w-full md:max-w-sm" : ""}`}
+              onClick={() => navigate({ page: "bigbad" })}
+              onKeyDown={(e) =>
+                handleCardKeyDown(e, () => navigate({ page: "bigbad" }))
+              }
+            >
+              <CardHeader className="my-auto">
+                <div className="flex items-center gap-3">
+                  <ListOrdered className="size-6 shrink-0" />
+                  <div>
+                    <CardTitle className="text-lg">Big Bad List</CardTitle>
+                    <CardDescription className="mt-1">Rank your favorite frosh</CardDescription>
+                  </div>
                 </div>
-              </div>
-            </CardHeader>
-          </Card>
-          <Card
-            role="button"
-            tabIndex={0}
-            className="cursor-pointer py-4 transition-all hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none hover:brightness-110"
-            onClick={() => navigate({ page: "admin" })}
-            onKeyDown={(e) =>
-              handleCardKeyDown(e, () => navigate({ page: "admin" }))
-            }
-          >
-            <CardHeader className="my-auto">
-              <div className="flex items-center gap-3">
-                <Settings className="size-6 shrink-0" />
-                <div>
-                  <CardTitle className="text-lg">Admin</CardTitle>
-                  <CardDescription className="mt-1">Upload/manage frosh data</CardDescription>
+              </CardHeader>
+            </Card>
+          )}
+          {user.roles.includes("frotator-admin") && (
+            <Card
+              role="button"
+              tabIndex={0}
+              className={`cursor-pointer py-4 transition-all hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none hover:brightness-110${!user.roles.includes("frotator-bigbad") ? " md:col-start-1 md:col-end-3 md:mx-auto md:w-full md:max-w-sm" : ""}`}
+              onClick={() => navigate({ page: "admin" })}
+              onKeyDown={(e) =>
+                handleCardKeyDown(e, () => navigate({ page: "admin" }))
+              }
+            >
+              <CardHeader className="my-auto">
+                <div className="flex items-center gap-3">
+                  <Settings className="size-6 shrink-0" />
+                  <div>
+                    <CardTitle className="text-lg">Admin</CardTitle>
+                    <CardDescription className="mt-1">Upload/manage frosh data</CardDescription>
+                  </div>
                 </div>
-              </div>
-            </CardHeader>
-          </Card>
+              </CardHeader>
+            </Card>
+          )}
         </div>
       )}
     </div>

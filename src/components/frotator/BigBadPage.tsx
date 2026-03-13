@@ -71,6 +71,7 @@ export default function BigBadPage({ navigate, user }: Props) {
 
   useEffect(() => {
     fetchRankingList();
+    fetchFrosh(search, 1);
   }, []);
 
   const updateField = (name: string, value: string) => {
@@ -102,7 +103,7 @@ export default function BigBadPage({ navigate, user }: Props) {
       <h1 className="mb-4 text-3xl font-heading">Big Bad List</h1>
 
       <Button className="mb-4" onClick={() => setSheetOpen(true)}>
-        Prefr*sh List
+        Prefrosh List
       </Button>
 
       <div className="space-y-3">
@@ -116,7 +117,7 @@ export default function BigBadPage({ navigate, user }: Props) {
         ))}
         {rankingList.length === 0 && (
           <p className="py-8 text-center text-sm text-foreground/60">
-            No frosh ranked yet. Open the Prefr*sh List to add some.
+            No frosh ranked yet. Open the Prefrosh List to add some.
           </p>
         )}
       </div>
@@ -199,11 +200,11 @@ export default function BigBadPage({ navigate, user }: Props) {
               </AccordionItem>
             </Accordion>
 
-            <div className="space-y-3">
+            <div className="divide-y divide-border/50">
               {froshList.map((f) => (
                 <div
                   key={f.id}
-                  className="flex items-center gap-3 rounded-base border-2 border-border p-2"
+                  className="flex items-center gap-3 py-2.5"
                 >
                   <div
                     className="size-12 shrink-0 rounded bg-cover bg-center"

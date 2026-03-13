@@ -121,7 +121,7 @@ export default function FroshListPage({ navigate, user }: Props) {
             />
             <Card className="py-4 gap-2">
               <CardHeader>
-                <CardTitle className="text-sm">Prefr*sh Bio Info</CardTitle>
+                <CardTitle className="text-sm">Prefrosh Bio Info</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {(
@@ -130,7 +130,7 @@ export default function FroshListPage({ navigate, user }: Props) {
                     ["bio-major", "Major"],
                     ["bio-hobbies", "Hobbies"],
                     ["bio-clubs", "Clubs"],
-                    ["bio-funfact", "Funfact"],
+                    ["bio-funfact", "Fun Fact"],
                   ] as const
                 ).map(([field, label]) => (
                   <FieldGroup key={field} label={label}>
@@ -158,7 +158,7 @@ export default function FroshListPage({ navigate, user }: Props) {
       >
         <ArrowLeft className="size-4" /> Back
       </Button>
-      <h1 className="mb-4 text-3xl font-heading">Prefr*sh List</h1>
+      <h1 className="mb-4 text-3xl font-heading">Prefrosh List</h1>
 
       <Accordion type="single" collapsible className="mb-6">
         <AccordionItem value="search">
@@ -258,7 +258,7 @@ function FieldGroup({
 }) {
   return (
     <div className="space-y-1">
-      <label className="text-sm font-medium">{label}</label>
+      <label className="mb-1 block text-sm font-medium">{label}</label>
       {children}
     </div>
   );
