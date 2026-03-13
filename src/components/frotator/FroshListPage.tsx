@@ -36,6 +36,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { ArrowLeft } from "lucide-react";
 import FroshGrid from "./FroshGrid";
 import type { Route } from "./FrotatorApp";
 import type { SearchParams } from "@/lib/api/frotator";
@@ -149,6 +150,14 @@ export default function FroshListPage({ navigate, user }: Props) {
         </SheetContent>
       </Sheet>
 
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => navigate({ page: "home" })}
+        className="mb-4"
+      >
+        <ArrowLeft className="size-4" /> Back
+      </Button>
       <h1 className="mb-4 text-3xl font-heading">Prefr*sh List</h1>
 
       <Accordion type="single" collapsible className="mb-6">
