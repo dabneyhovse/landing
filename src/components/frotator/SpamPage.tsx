@@ -52,7 +52,7 @@ export default function SpamPage({ navigate, user }: Props) {
   }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [messages.length]);
 
   const handleSend = async () => {
@@ -84,9 +84,9 @@ export default function SpamPage({ navigate, user }: Props) {
         <ArrowLeft className="size-4" /> Back
       </Button>
 
-      <h1 className="mb-4 text-3xl font-heading">Spam</h1>
+      <h1 className="mb-4 text-3xl font-heading text-center">Spam</h1>
 
-      <Card className="mx-auto max-w-2xl">
+      <Card className="mx-auto max-w-2xl py-4 gap-2">
         <CardHeader>
           <CardTitle>Messages</CardTitle>
         </CardHeader>

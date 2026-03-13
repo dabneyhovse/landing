@@ -137,7 +137,7 @@ export default function FroshDetail({ froshId, navigate, goBack, user }: Props) 
         </Card>
 
         {/* Bio card */}
-        <Card>
+        <Card className="py-4">
           <CardHeader>
             <CardTitle>Prefr*sh Bio</CardTitle>
           </CardHeader>
@@ -158,7 +158,7 @@ export default function FroshDetail({ froshId, navigate, goBack, user }: Props) 
       </div>
 
       {/* Comments */}
-      <Card className="mt-6">
+      <Card className="mt-6 py-4 gap-2">
         <CardHeader>
           <CardTitle>
             Comments ({frosh["frotator-comments"].length})

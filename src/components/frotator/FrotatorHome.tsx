@@ -6,10 +6,18 @@ import {
 } from "@/components/ui/card";
 import { Users, Layers, MessageSquare, HelpCircle, ListOrdered, Settings, ArrowLeft } from "lucide-react";
 import type { Route } from "./FrotatorApp";
+import type { KeyboardEvent } from "react";
 
 interface Props {
   navigate: (route: Route) => void;
   user: { roles: string[] };
+}
+
+function handleCardKeyDown(e: KeyboardEvent, action: () => void) {
+  if (e.key === "Enter" || e.key === " ") {
+    e.preventDefault();
+    action();
+  }
 }
 
 const NAV_CARDS = [
@@ -61,14 +69,20 @@ export default function FrotatorHome({ navigate, user }: Props) {
         {NAV_CARDS.map((card) => (
           <Card
             key={card.title}
+            role="button"
+            tabIndex={card.route ? 0 : undefined}
+            aria-disabled={!card.route || undefined}
             className={
               card.route
-                ? "cursor-pointer transition-transform hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none"
-                : "opacity-60"
+                ? "cursor-pointer py-4 transition-all hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none hover:brightness-110"
+                : "py-4 opacity-60"
             }
             onClick={() => card.route && navigate(card.route)}
+            onKeyDown={(e) =>
+              card.route && handleCardKeyDown(e, () => navigate(card.route!))
+            }
           >
-            <CardHeader>
+            <CardHeader className="my-auto">
               <div className="flex items-center gap-3">
                 <card.icon className="size-6 shrink-0" />
                 <div>
@@ -86,10 +100,15 @@ export default function FrotatorHome({ navigate, user }: Props) {
       {user.roles.includes("frotator-admin") && (
         <div className="mt-6 grid gap-4 sm:grid-cols-1 md:grid-cols-2">
           <Card
-            className="cursor-pointer transition-transform hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none"
+            role="button"
+            tabIndex={0}
+            className="cursor-pointer py-4 transition-all hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none hover:brightness-110"
             onClick={() => navigate({ page: "bigbad" })}
+            onKeyDown={(e) =>
+              handleCardKeyDown(e, () => navigate({ page: "bigbad" }))
+            }
           >
-            <CardHeader>
+            <CardHeader className="my-auto">
               <div className="flex items-center gap-3">
                 <ListOrdered className="size-6 shrink-0" />
                 <div>
@@ -100,10 +119,15 @@ export default function FrotatorHome({ navigate, user }: Props) {
             </CardHeader>
           </Card>
           <Card
-            className="cursor-pointer transition-transform hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none"
+            role="button"
+            tabIndex={0}
+            className="cursor-pointer py-4 transition-all hover:translate-x-boxShadowX hover:translate-y-boxShadowY hover:shadow-none hover:brightness-110"
             onClick={() => navigate({ page: "admin" })}
+            onKeyDown={(e) =>
+              handleCardKeyDown(e, () => navigate({ page: "admin" }))
+            }
           >
-            <CardHeader>
+            <CardHeader className="my-auto">
               <div className="flex items-center gap-3">
                 <Settings className="size-6 shrink-0" />
                 <div>

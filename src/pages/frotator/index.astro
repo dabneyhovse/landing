@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import FrotatorApp from "../../components/frotator/FrotatorApp";
+import crest from "../../assets/crest.svg";
 
 const user = Astro.locals.user;
 if (!user) return Astro.redirect("/api/auth/login?returnTo=/frotator");
@@ -10,5 +11,24 @@ if (!user.roles?.includes("frotator-access")) {
 ---
 
 <Layout>
-  <FrotatorApp client:load user={user} />
+  <div class="frotator-bg relative min-h-screen overflow-x-hidden font-lexend">
+    <img
+      src={crest.src}
+      alt=""
+      class="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rotate-12 opacity-[0.06] w-[700px] h-auto invert brightness-[2]"
+    />
+    <div class="relative z-10">
+      <FrotatorApp client:load user={user} />
+    </div>
+  </div>
 </Layout>
+
+<style>
+  .font-lexend {
+    font-family: var(--font-lexend);
+  }
+  .frotator-bg {
+    background: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.06) 0%, transparent 60%),
+                var(--background);
+  }
+</style>

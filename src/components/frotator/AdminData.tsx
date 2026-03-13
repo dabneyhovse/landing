@@ -73,7 +73,7 @@ export default function AdminData({ navigate }: Props) {
       <h1 className="mb-6 text-3xl font-heading">Admin - Data Management</h1>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card>
+        <Card className="py-4">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Upload className="size-5" /> Upload CSV
@@ -91,7 +91,7 @@ export default function AdminData({ navigate }: Props) {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="py-4">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Upload className="size-5" /> Update CSV
@@ -112,7 +112,7 @@ export default function AdminData({ navigate }: Props) {
         </Card>
       </div>
 
-      <Card className="mt-6 border-destructive">
+      <Card className="mt-6 py-4 gap-2 border-destructive">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-destructive">
             <Trash2 className="size-5" /> Danger Zone
