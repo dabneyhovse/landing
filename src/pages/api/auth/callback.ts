@@ -35,7 +35,7 @@ export const GET: APIRoute = async ({ url, cookies, redirect }) => {
 
   cookies.set("session", encrypted, {
     httpOnly: true,
-    secure: true,
+    secure: url.protocol === "https:",
     sameSite: "lax",
     path: "/",
     maxAge: SESSION_MAX_AGE,

@@ -5,10 +5,11 @@ import { getAuthorizationUrl } from "@/lib/keycloak";
 export const GET: APIRoute = async ({ url, cookies, redirect }) => {
   const returnTo = url.searchParams.get("returnTo") || "/";
   const state = randomBytes(16).toString("hex");
+  const isSecure = url.protocol === "https:";
 
   cookies.set("oauth_state", state, {
     httpOnly: true,
-    secure: true,
+    secure: isSecure,
     sameSite: "lax",
     path: "/",
     maxAge: 600, // 10 minutes
@@ -16,7 +17,7 @@ export const GET: APIRoute = async ({ url, cookies, redirect }) => {
 
   cookies.set("return_to", returnTo, {
     httpOnly: true,
-    secure: true,
+    secure: isSecure,
     sameSite: "lax",
     path: "/",
     maxAge: 600,

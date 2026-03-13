@@ -42,6 +42,48 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  /* Dark green theme (site-wide default) */
+  --background: oklch(0.32 0.0801 148);
+  --secondary-background: oklch(0.27 0.0671 148);
+  --foreground: oklch(0.98 0.02 111.15);
+  --main-foreground: oklch(0.98 0.02 111.15);
+  --main: oklch(0.48 0.0891 148);
+  --border: oklch(0.48 0.0891 148 / 0.25);
+  --ring: oklch(0.48 0.0891 148);
+  --overlay: oklch(0 0 0 / 0.6);
+  --shadow: none;
+
+  /* shadcn semantic colors */
+  --primary: oklch(0.48 0.0891 148);
+  --primary-foreground: oklch(0.98 0.02 111.15);
+  --secondary: oklch(0.35 0.0831 148);
+  --secondary-foreground: oklch(0.98 0.02 111.15);
+  --muted: oklch(0.35 0.0831 148);
+  --muted-foreground: oklch(0.98 0.02 111.15 / 0.6);
+  --accent: oklch(0.39 0.0851 148);
+  --accent-foreground: oklch(0.98 0.02 111.15);
+  --destructive: oklch(0.55 0.2 27);
+  --input: oklch(0.48 0.0891 148 / 0.4);
+  --popover: oklch(0.27 0.0671 148);
+  --popover-foreground: oklch(0.98 0.02 111.15);
+
+  /* Radius/spacing indirection for theme switching */
+  --radius-val: 1rem;
+  --box-shadow-x-val: 0px;
+  --box-shadow-y-val: 0px;
+  --reverse-box-shadow-x-val: 0px;
+  --reverse-box-shadow-y-val: 0px;
+
+  /* Charts */
+  --chart-1: #00D696;
+  --chart-2: #FF7A05;
+  --chart-3: #0099FF;
+  --chart-4: #FFBF00;
+  --chart-5: #7A83FF;
+  --chart-active-dot: #fff;
+}
+
+.brutal {
   --background: oklch(96.47% 0.0401 157.79);
   --secondary-background: oklch(100% 0 0);
   --foreground: oklch(0% 0 0);
@@ -51,11 +93,26 @@
   --ring: oklch(0% 0 0);
   --overlay: oklch(0% 0 0 / 0.8);
   --shadow: 4px 4px 0px 0px var(--border);
-  --chart-1: #00D696;
-  --chart-2: #FF7A05;
-  --chart-3: #0099FF;
-  --chart-4: #FFBF00;
-  --chart-5: #7A83FF;
+
+  --primary: oklch(79.76% 0.2044 153.08);
+  --primary-foreground: oklch(0% 0 0);
+  --secondary: oklch(96.47% 0.0401 157.79);
+  --secondary-foreground: oklch(0% 0 0);
+  --muted: oklch(90% 0.02 157);
+  --muted-foreground: oklch(40% 0 0);
+  --accent: oklch(90% 0.04 157);
+  --accent-foreground: oklch(0% 0 0);
+  --destructive: oklch(55% 0.2 27);
+  --input: oklch(0% 0 0);
+  --popover: oklch(100% 0 0);
+  --popover-foreground: oklch(0% 0 0);
+
+  --radius-val: 5px;
+  --box-shadow-x-val: 4px;
+  --box-shadow-y-val: 4px;
+  --reverse-box-shadow-x-val: -4px;
+  --reverse-box-shadow-y-val: -4px;
+
   --chart-active-dot: #000;
 }
 
@@ -68,6 +125,26 @@
   --border: oklch(0% 0 0);
   --ring: oklch(100% 0 0);
   --shadow: 4px 4px 0px 0px var(--border);
+
+  --primary: oklch(73.03% 0.1865 153.23);
+  --primary-foreground: oklch(0% 0 0);
+  --secondary: oklch(30% 0.03 158);
+  --secondary-foreground: oklch(92.49% 0 0);
+  --muted: oklch(30% 0.03 158);
+  --muted-foreground: oklch(60% 0 0);
+  --accent: oklch(35% 0.04 158);
+  --accent-foreground: oklch(92.49% 0 0);
+  --destructive: oklch(55% 0.2 27);
+  --input: oklch(0% 0 0);
+  --popover: oklch(23.93% 0 0);
+  --popover-foreground: oklch(92.49% 0 0);
+
+  --radius-val: 5px;
+  --box-shadow-x-val: 4px;
+  --box-shadow-y-val: 4px;
+  --reverse-box-shadow-x-val: -4px;
+  --reverse-box-shadow-y-val: -4px;
+
   --chart-1: #00BD84;
   --chart-2: #EB6D00;
   --chart-3: #008AE5;
@@ -91,16 +168,31 @@
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
 
-  --spacing-boxShadowX: 4px;
-  --spacing-boxShadowY: 4px;
-  --spacing-reverseBoxShadowX: -4px;
-  --spacing-reverseBoxShadowY: -4px;
-  --radius-base: 5px;
+  /* shadcn semantic color mappings */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-input: var(--input);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  /* Radius/spacing via indirection for theme switching */
+  --spacing-boxShadowX: var(--box-shadow-x-val);
+  --spacing-boxShadowY: var(--box-shadow-y-val);
+  --spacing-reverseBoxShadowX: var(--reverse-box-shadow-x-val);
+  --spacing-reverseBoxShadowY: var(--reverse-box-shadow-y-val);
+  --radius-base: var(--radius-val);
   --shadow-shadow: var(--shadow);
   --font-weight-base: 500;
   --font-weight-heading: 700;
 }
-  
+
 @layer base {
   body {
     @apply text-foreground font-base bg-background;
