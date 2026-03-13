@@ -1,4 +1,4 @@
-name: Build Astro & publish Nginx image
+name: Build & publish Landing image
 
 on:
   push:
@@ -11,37 +11,8 @@ env:
   IMAGE_NAME: landing
 
 jobs:
-  build-site:
-    name: Build Site
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
-
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: "pnpm"
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build Astro site
-        run: pnpm run build
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: astro-dist
-          path: dist
-
   container:
     name: Build & push image
-    needs: build-site
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -50,12 +21,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: astro-dist
-          path: dist
 
       - name: Log in to GHCR
         uses: docker/login-action@v3

@@ -1,0 +1,161 @@
+const API_BASE = "/api/frotator";
+
+export async function apiFetch<T>(
+  path: string,
+  options?: RequestInit,
+): Promise<T> {
+  const res = await fetch(`${API_BASE}${path}`, {
+    credentials: "same-origin",
+    ...options,
+    headers: { "Content-Type": "application/json", ...options?.headers },
+  });
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
+
+export interface FroshBio {
+  hometown: string;
+  major: string;
+  hobbies: string;
+  clubs: string;
+  funfact: string;
+}
+
+export interface FroshComment {
+  id: number;
+  text: string;
+  from: {
+    name: string;
+    picture: string;
+  };
+}
+
+export interface Frosh {
+  id: number;
+  displayName: string;
+  anagram: string;
+  pronouns: string;
+  dinnerGroup: string;
+  image: string | null;
+  bio: FroshBio;
+  favorite: boolean;
+  "frotator-comments": FroshComment[];
+  rank?: number;
+}
+
+export interface SearchParams {
+  dinnerGroup: string;
+  name: string;
+  anagram: string;
+  sort: string;
+  "bio-hometown"?: string;
+  "bio-major"?: string;
+  "bio-hobbies"?: string;
+  "bio-clubs"?: string;
+  "bio-funfact"?: string;
+  only_my_favorites?: boolean;
+}
+
+function toQueryString(
+  params: Record<string, unknown>,
+): string {
+  return Object.entries(params)
+    .filter(([, v]) => v !== undefined && v !== "")
+    .map(([k, v]) => {
+      const val =
+        typeof v === "object" && v !== null
+          ? JSON.stringify(v)
+          : String(v);
+      return `${encodeURIComponent(k)}=${encodeURIComponent(val)}`;
+    })
+    .join("&");
+}
+
+export async function fetchFroshList(
+  search: SearchParams,
+  pageNum: number,
+): Promise<{ rows: Frosh[]; count: number }> {
+  const qs = toQueryString({ search, pageNum });
+  return apiFetch(`/frosh?${qs}`);
+}
+
+export async function fetchFroshCards(
+  search: Partial<SearchParams>,
+): Promise<{ rows: Frosh[] }> {
+  const qs = toQueryString({ search, cards: true });
+  return apiFetch(`/frosh?${qs}`);
+}
+
+export async function fetchSingleFrosh(id: number): Promise<Frosh> {
+  return apiFetch(`/frosh/${id}`);
+}
+
+export async function postComment(comment: {
+  froshId: number;
+  text: string;
+  anon: boolean;
+  userId: string;
+}): Promise<FroshComment> {
+  return apiFetch("/comments", {
+    method: "POST",
+    body: JSON.stringify(comment),
+  });
+}
+
+export async function toggleFavorite(
+  froshId: number,
+  favorite: boolean,
+): Promise<void> {
+  await apiFetch("/frosh/favorite", {
+    method: "POST",
+    body: JSON.stringify({ froshId, favorite }),
+  });
+}
+
+export async function fetchRanking(): Promise<Frosh[]> {
+  return apiFetch("/frosh/ranking");
+}
+
+export async function updateRanking(
+  froshId: number,
+  rank: number,
+): Promise<Frosh[]> {
+  return apiFetch("/frosh/ranking", {
+    method: "PUT",
+    body: JSON.stringify({ froshId, rank }),
+  });
+}
+
+export async function uploadCsv(
+  file: File,
+  method: "POST" | "PUT" = "POST",
+): Promise<void> {
+  const formData = new FormData();
+  formData.append("file", file);
+  const res = await fetch(`${API_BASE}/frosh/upload`, {
+    method,
+    credentials: "same-origin",
+    body: formData,
+  });
+  if (!res.ok) throw new Error(`Upload error: ${res.status}`);
+}
+
+export async function deleteFrosh(): Promise<void> {
+  await apiFetch("/frosh", { method: "DELETE" });
+}
+
+export async function fetchSpam(): Promise<
+  { id: number; text: string; from: { username: string } }[]
+> {
+  return apiFetch("/spam");
+}
+
+export async function postSpam(message: {
+  text: string;
+  from: { username: string };
+}): Promise<void> {
+  await apiFetch("/spam", {
+    method: "POST",
+    body: JSON.stringify(message),
+  });
+}

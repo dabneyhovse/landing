@@ -1,0 +1,14 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import FrotatorApp from "../../components/frotator/FrotatorApp";
+
+const user = Astro.locals.user;
+if (!user) return Astro.redirect("/api/auth/login?returnTo=/frotator");
+if (!user.roles?.includes("frotator-access")) {
+  return new Response("Forbidden", { status: 403 });
+}
+---
+
+<Layout>
+  <FrotatorApp client:load user={user} />
+</Layout>
