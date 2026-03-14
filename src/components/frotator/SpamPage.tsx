@@ -12,6 +12,8 @@ import {
   AvatarFallback,
 } from "@/components/ui/avatar";
 import { fetchSpam, postSpam } from "@/lib/api/frotator";
+import { subscribe } from "@/lib/spamSSE";
+import { TAB_ID } from "./SpamListener";
 import { toast } from "sonner";
 import { ArrowLeft, Send } from "lucide-react";
 import type { Route } from "./FrotatorApp";
@@ -36,17 +38,33 @@ export default function SpamPage({ navigate, user }: Props) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const poll = async () => {
-      try {
-        const data = await fetchSpam();
-        setMessages(data);
-      } catch {
-        // silent fail on poll
+    let historyLoaded = false;
+    const buffered: SpamMessage[] = [];
+
+    // Subscribe to live updates (shares connection with SpamListener)
+    const unsubscribe = subscribe((msg) => {
+      if (historyLoaded) {
+        setMessages((prev) => [...prev, msg]);
+      } else {
+        buffered.push(msg);
       }
-    };
-    poll();
-    const interval = setInterval(poll, 3000);
-    return () => clearInterval(interval);
+    });
+
+    // Load history, then merge any messages that arrived during fetch
+    fetchSpam()
+      .then((history) => {
+        const lastTs = history.length > 0 ? history[history.length - 1].timestamp : 0;
+        const missed = buffered.filter((m) => m.timestamp > lastTs);
+        setMessages([...history, ...missed]);
+        historyLoaded = true;
+      })
+      .catch(() => {
+        // If fetch fails, at least show buffered SSE messages
+        setMessages(buffered);
+        historyLoaded = true;
+      });
+
+    return unsubscribe;
   }, []);
 
   useEffect(() => {
@@ -55,15 +73,10 @@ export default function SpamPage({ navigate, user }: Props) {
 
   const handleSend = async () => {
     if (!newMessage.trim()) return;
-    const msg: SpamMessage = {
-      text: newMessage,
-      name: user.preferred_username,
-      timestamp: Date.now(),
-    };
+    const text = newMessage;
     setNewMessage("");
-    setMessages((prev) => [...prev, msg]);
     try {
-      await postSpam({ text: msg.text });
+      await postSpam({ text, tabId: TAB_ID });
     } catch {
       toast.error("Failed to send spam");
     }

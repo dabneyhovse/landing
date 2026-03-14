@@ -359,6 +359,9 @@ export const DELETE: APIRoute = async (ctx) => {
 
   try {
     await Frosh.truncate({ cascade: true });
+    // Clear in-memory spam messages
+    const { messages } = await import("@/lib/spamStore");
+    messages.length = 0;
     return new Response(null, { status: 200 });
   } catch (error) {
     return jsonResponse({ error: "Internal server error" }, 500);

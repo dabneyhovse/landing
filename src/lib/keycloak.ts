@@ -116,6 +116,55 @@ export async function fetchKeycloakUser(
   }
 }
 
+let clientUuid: string | null = null;
+
+async function getClientUuid(): Promise<string> {
+  if (clientUuid) return clientUuid;
+  const token = await getServiceToken();
+  const res = await fetch(
+    `${KC_API_URL}/clients?clientId=${encodeURIComponent(KC_CLIENT_ID)}`,
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
+  if (!res.ok) throw new Error(`Client lookup error: ${res.status}`);
+  const clients = await res.json();
+  clientUuid = clients[0].id;
+  return clientUuid!;
+}
+
+let secretaryCache: { name: string | null; expiresAt: number } | null = null;
+
+export async function getSecretaryName(): Promise<string | null> {
+  if (secretaryCache && Date.now() < secretaryCache.expiresAt) {
+    return secretaryCache.name;
+  }
+
+  try {
+    const token = await getServiceToken();
+    const uuid = await getClientUuid();
+    const res = await fetch(
+      `${KC_API_URL}/clients/${uuid}/roles/frotator-secretary/users`,
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
+
+    if (!res.ok || res.status === 403) {
+      secretaryCache = { name: null, expiresAt: Date.now() + 60 * 1000 };
+      return null;
+    }
+
+    const users = await res.json();
+    const name =
+      users.length > 0
+        ? users[0].firstName || users[0].username
+        : null;
+
+    secretaryCache = { name, expiresAt: Date.now() + 5 * 60 * 1000 };
+    return name;
+  } catch {
+    secretaryCache = { name: null, expiresAt: Date.now() + 60 * 1000 };
+    return null;
+  }
+}
+
 export async function getEndSessionUrl(
   postLogoutRedirectUri: string,
   idTokenHint?: string,

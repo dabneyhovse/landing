@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -5,6 +6,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Users, Layers, MessageSquare, HelpCircle, ListOrdered, Settings, ArrowLeft } from "lucide-react";
+import { apiFetch } from "@/lib/api/frotator";
 import type { Route } from "./FrotatorApp";
 import type { KeyboardEvent } from "react";
 
@@ -37,19 +39,29 @@ const NAV_CARDS = [
   {
     title: "Frosh Quiz",
     description:
-      "Prove your frosh comprehension skills. Will not be available until the end of rotation nears.",
+      "Prove your frosh comprehension skills. One attempt only!",
     icon: HelpCircle,
-    route: null,
+    route: { page: "quiz" } as Route,
   },
   {
     title: "Spam",
-    description: "Want to spam Alanna during meetings? You're in luck!",
+    description: "Want to spam {secretary} during meetings? You're in luck!",
     icon: MessageSquare,
     route: { page: "spam" } as Route,
   },
 ];
 
 export default function FrotatorHome({ navigate, user }: Props) {
+  const [secretaryName, setSecretaryName] = useState("the secretary");
+
+  useEffect(() => {
+    apiFetch<{ name: string | null }>("/secretary")
+      .then((data) => {
+        if (data.name) setSecretaryName(data.name);
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <div>
       <a
@@ -88,7 +100,7 @@ export default function FrotatorHome({ navigate, user }: Props) {
                 <div>
                   <CardTitle className="text-lg">{card.title}</CardTitle>
                   <CardDescription className="mt-1">
-                    {card.description}
+                    {card.description.replace("{secretary}", secretaryName)}
                   </CardDescription>
                 </div>
               </div>

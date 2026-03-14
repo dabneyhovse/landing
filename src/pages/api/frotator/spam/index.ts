@@ -1,15 +1,7 @@
 import type { APIRoute } from "astro";
 import { requireRole, jsonResponse } from "@/lib/auth";
-
-interface SpamMessage {
-  text: string;
-  userId: string;
-  name: string;
-  timestamp: number;
-}
-
-const messages: SpamMessage[] = [];
-const MAX_MESSAGES = 100;
+import { messages, MAX_MESSAGES, broadcastMessage } from "@/lib/spamStore";
+import type { SpamMessage } from "@/lib/spamStore";
 
 export const GET: APIRoute = async (ctx) => {
   const authError = requireRole(ctx.locals.user, "frotator-access");
@@ -30,12 +22,15 @@ export const POST: APIRoute = async (ctx) => {
       userId: ctx.locals.user!.sub,
       name: ctx.locals.user!.name,
       timestamp: Date.now(),
+      tabId: body.tabId,
     };
 
     messages.push(message);
     if (messages.length > MAX_MESSAGES) {
       messages.shift();
     }
+
+    broadcastMessage(message);
 
     return jsonResponse(message, 201);
   } catch (error) {

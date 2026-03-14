@@ -139,7 +139,7 @@ export default function FroshDetail({ froshId, navigate, goBack, user }: Props) 
         {/* Bio card */}
         <Card className="py-4">
           <CardHeader>
-            <CardTitle>Prefr*sh Bio</CardTitle>
+            <CardTitle>Prefrosh Bio</CardTitle>
           </CardHeader>
           <CardContent>
             {bioFields.map((field, i) => (
