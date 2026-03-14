@@ -1,6 +1,6 @@
-# dabney.house
+# dabney.caltech.edu
 
-This is an Astro project. To run locally, run `pnpm install`, and then `pnpm dev`. After pushing your changes, GitHub Actions will rebuild the container. Pressing the update button in `landing` on [containers.dabney.house](https://containers.dabney.house) will pull this new container and the changes will be reflected on [dabney.house](https://dabney.house).
+This is an Astro project. To run locally, run `pnpm install`, and then `pnpm dev`. After pushing your changes, GitHub Actions will rebuild the container. Pressing the update button in `landing` on [containers.dabney.caltech.edu](https://containers.dabney.caltech.edu) will pull this new container and the changes will be reflected on [dabney.caltech.edu](https://dabney.caltech.edu).
 
 ## Project Structure
 
