@@ -25,7 +25,7 @@ function handleCardKeyDown(e: KeyboardEvent, action: () => void) {
 const NAV_CARDS = [
   {
     title: "Prefrosh List",
-    description: "A simple list of all the prefrosh",
+    description: "View, favorite, and leave comments about prefrosh.",
     icon: Users,
     route: { page: "frosh-list" } as Route,
   },
@@ -100,7 +100,9 @@ export default function FrotatorHome({ navigate, user }: Props) {
                 <div>
                   <CardTitle className="text-lg">{card.title}</CardTitle>
                   <CardDescription className="mt-1">
-                    {card.description.replace("{secretary}", secretaryName)}
+                    {card.title === "Spam" && user.roles.includes("frotator-secretary")
+                      ? "The instrument of your undoing."
+                      : card.description.replace("{secretary}", secretaryName)}
                   </CardDescription>
                 </div>
               </div>

@@ -70,7 +70,6 @@ export default function FroshListPage({ navigate, user }: Props) {
   } = useFroshStore();
 
   const [sheetOpen, setSheetOpen] = useState(false);
-  const hasAdvSort = user.roles.includes("frotator-adv-sort");
 
   const updateField = (name: string, value: string | boolean) => {
     setSearch({ ...search, [name]: value } as SearchParams);
@@ -117,7 +116,6 @@ export default function FroshListPage({ navigate, user }: Props) {
             <SortSelect
               value={search.sort}
               onChange={(v) => updateField("sort", v)}
-              showAdvanced={hasAdvSort}
             />
             <Card className="py-4 gap-2">
               <CardHeader>
@@ -179,7 +177,6 @@ export default function FroshListPage({ navigate, user }: Props) {
               <SortSelect
                 value={search.sort}
                 onChange={(v) => updateField("sort", v)}
-                showAdvanced={hasAdvSort}
               />
               <div className="flex items-center gap-2">
                 <Checkbox
@@ -292,11 +289,9 @@ function DinnerGroupSelect({
 function SortSelect({
   value,
   onChange,
-  showAdvanced,
 }: {
   value: string;
   onChange: (v: string) => void;
-  showAdvanced: boolean;
 }) {
   return (
     <FieldGroup label="Sort">
@@ -305,16 +300,11 @@ function SortSelect({
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="0">Default</SelectItem>
           <SelectItem value="1">Alphabetical</SelectItem>
-          {showAdvanced && (
-            <>
-              <SelectItem value="2">Most Comments</SelectItem>
-              <SelectItem value="3">Least Comments</SelectItem>
-              <SelectItem value="4">Most Favorites</SelectItem>
-              <SelectItem value="5">Least Favorites</SelectItem>
-            </>
-          )}
+          <SelectItem value="2">Most Comments</SelectItem>
+          <SelectItem value="3">Least Comments</SelectItem>
+          <SelectItem value="4">Most Favorites</SelectItem>
+          <SelectItem value="5">Least Favorites</SelectItem>
         </SelectContent>
       </Select>
     </FieldGroup>

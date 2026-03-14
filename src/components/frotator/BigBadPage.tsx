@@ -66,7 +66,7 @@ export default function BigBadPage({ navigate, user }: Props) {
   } = useFroshStore();
 
   const [sheetOpen, setSheetOpen] = useState(false);
-  const hasAdvSort = user.roles.includes("frotator-adv-sort");
+
   const rankingUpdate = useRankingStore((s) => s.update);
 
   useEffect(() => {
@@ -171,24 +171,19 @@ export default function BigBadPage({ navigate, user }: Props) {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="0">Default</SelectItem>
                           <SelectItem value="1">Alphabetical</SelectItem>
-                          {hasAdvSort && (
-                            <>
-                              <SelectItem value="2">
-                                Most Comments
-                              </SelectItem>
-                              <SelectItem value="3">
-                                Least Comments
-                              </SelectItem>
-                              <SelectItem value="4">
-                                Most Favorites
-                              </SelectItem>
-                              <SelectItem value="5">
-                                Least Favorites
-                              </SelectItem>
-                            </>
-                          )}
+                          <SelectItem value="2">
+                            Most Comments
+                          </SelectItem>
+                          <SelectItem value="3">
+                            Least Comments
+                          </SelectItem>
+                          <SelectItem value="4">
+                            Most Favorites
+                          </SelectItem>
+                          <SelectItem value="5">
+                            Least Favorites
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
