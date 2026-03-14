@@ -151,9 +151,80 @@ export async function fetchSpam(): Promise<
   return apiFetch("/spam");
 }
 
-export async function postSpam(message: { text: string }): Promise<void> {
+export async function postSpam(message: { text: string; tabId?: string }): Promise<void> {
   await apiFetch("/spam", {
     method: "POST",
     body: JSON.stringify(message),
   });
+}
+
+// Preferences
+
+export interface UserPreferences {
+  spamToasts: boolean;
+}
+
+export async function fetchPreferences(): Promise<UserPreferences> {
+  return apiFetch("/preferences");
+}
+
+export async function updatePreferences(prefs: Partial<UserPreferences>): Promise<UserPreferences> {
+  return apiFetch("/preferences", {
+    method: "PUT",
+    body: JSON.stringify(prefs),
+  });
+}
+
+// Quiz types and API functions
+
+export interface QuizAttempt {
+  id: number;
+  userId: string;
+  userName: string;
+  userPicture: string | null;
+  score: number;
+  total: number;
+  currentIndex: number;
+  completedAt: string | null;
+  createdAt: string;
+}
+
+export interface QuizQuestion {
+  image: string;
+  choices: string[];
+}
+
+export interface QuizData {
+  attempt: QuizAttempt | null;
+  leaderboard: QuizAttempt[];
+  currentQuestion: QuizQuestion | null;
+}
+
+export interface AnswerResult {
+  correct: boolean;
+  correctAnswer: string;
+  nextQuestion: QuizQuestion | null;
+  score: number;
+  currentIndex: number;
+  total: number;
+}
+
+export async function fetchQuizData(): Promise<QuizData> {
+  return apiFetch("/quiz");
+}
+
+export async function startQuiz(): Promise<QuizData> {
+  return apiFetch("/quiz", { method: "POST" });
+}
+
+export async function submitAnswer(answer: string): Promise<AnswerResult> {
+  return apiFetch("/quiz/answer", {
+    method: "POST",
+    body: JSON.stringify({ answer }),
+  });
+}
+
+// DEV ONLY: Reset the current user's quiz attempt
+export async function resetQuiz(): Promise<void> {
+  await apiFetch("/quiz", { method: "DELETE" });
 }

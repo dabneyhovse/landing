@@ -4,6 +4,8 @@ import Concern from "./concern";
 import Event from "./event";
 import Frosh from "./frosh";
 import Prediction from "./prediction";
+import QuizAttempt from "./quizAttempt";
+import UserPreference from "./userPreference";
 import Vote from "./vote";
 
 // Comments are made on frosh profiles
@@ -33,4 +35,4 @@ Comment.belongsTo(Comment, { foreignKey: "replyToId" });
 // Sync tables on first import
 db.sync().catch(console.error);
 
-export { db, Comment, Concern, Event, Frosh, Prediction, Vote };
+export { db, Comment, Concern, Event, Frosh, Prediction, QuizAttempt, UserPreference, Vote };
