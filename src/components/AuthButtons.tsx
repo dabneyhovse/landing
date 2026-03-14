@@ -40,6 +40,14 @@ export default function AuthButtons() {
           </button>
         </a>
       )}
+      {(user.roles?.includes("website-manage-users") ||
+        user.roles?.includes("backbone-admin")) && (
+        <a href="/admin">
+          <button className="bg-darb-900 px-3 py-2 rounded-full w-full hover:bg-darb-800 transition hover:cursor-pointer">
+            Admin
+          </button>
+        </a>
+      )}
       <a href="/api/auth/logout">
         <button className="bg-darb-900 px-3 py-2 rounded-full w-full hover:bg-darb-800 transition hover:cursor-pointer">
           Log Out

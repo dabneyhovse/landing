@@ -165,6 +165,100 @@ export async function getSecretaryName(): Promise<string | null> {
   }
 }
 
+// --- Admin user management ---
+
+async function kcAdminFetch(
+  path: string,
+  options: RequestInit = {},
+): Promise<Response> {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const token = await getServiceToken();
+    const res = await fetch(`${KC_API_URL}${path}`, {
+      ...options,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ...options.headers,
+      },
+    });
+
+    if (res.status === 401 && attempt === 0) {
+      serviceToken = null;
+      continue;
+    }
+
+    return res;
+  }
+  throw new Error("Keycloak admin request failed after retry");
+}
+
+export interface KcUser {
+  id: string;
+  username: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  enabled?: boolean;
+}
+
+export async function searchUsers(
+  query: string,
+  first = 0,
+  max = 20,
+): Promise<KcUser[]> {
+  const params = new URLSearchParams({
+    search: query,
+    first: String(first),
+    max: String(max),
+  });
+  const res = await kcAdminFetch(`/users?${params}`);
+  if (!res.ok) throw new Error(`searchUsers error: ${res.status}`);
+  return res.json();
+}
+
+export async function getUserGroups(
+  userId: string,
+): Promise<{ id: string; name: string; path: string }[]> {
+  const res = await kcAdminFetch(`/users/${userId}/groups`);
+  if (!res.ok) throw new Error(`getUserGroups error: ${res.status}`);
+  return res.json();
+}
+
+const groupIdCache = new Map<string, string>();
+
+export async function findGroupByName(name: string): Promise<string> {
+  const cached = groupIdCache.get(name);
+  if (cached) return cached;
+
+  const res = await kcAdminFetch(
+    `/groups?search=${encodeURIComponent(name)}&exact=true`,
+  );
+  if (!res.ok) throw new Error(`findGroupByName error: ${res.status}`);
+  const groups = await res.json();
+  if (!groups.length) throw new Error(`Group "${name}" not found`);
+  groupIdCache.set(name, groups[0].id);
+  return groups[0].id;
+}
+
+export async function addUserToGroup(
+  userId: string,
+  groupId: string,
+): Promise<void> {
+  const res = await kcAdminFetch(`/users/${userId}/groups/${groupId}`, {
+    method: "PUT",
+  });
+  if (!res.ok) throw new Error(`addUserToGroup error: ${res.status}`);
+}
+
+export async function removeUserFromGroup(
+  userId: string,
+  groupId: string,
+): Promise<void> {
+  const res = await kcAdminFetch(`/users/${userId}/groups/${groupId}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error(`removeUserFromGroup error: ${res.status}`);
+}
+
 export async function getEndSessionUrl(
   postLogoutRedirectUri: string,
   idTokenHint?: string,
