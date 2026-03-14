@@ -2,6 +2,7 @@
 import { Image } from "astro:assets";
 import crest from "../assets/crest.svg";
 import SidePhoto from "../assets/gallery/Ski Trip.jpg";
+import AuthButtons from "./AuthButtons";
 ---
 
 <section class="lg:grid gap-16 lg:grid-cols-2 lg:gap-0 lg:h-screen">
@@ -53,6 +54,7 @@ import SidePhoto from "../assets/gallery/Ski Trip.jpg";
             Wiki
           </button>
         </a>
+        <AuthButtons client:load />
       </div>
     </div>
   </div>
