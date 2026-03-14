@@ -1,4 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 import UserTable from "./UserTable";
 import SingleUserForm from "./SingleUserForm";
 import BulkUpload from "./BulkUpload";
@@ -8,6 +10,11 @@ export default function UserManagement() {
   return (
     <>
       <Toaster richColors position="top-right" />
+      <a href="/">
+        <Button variant="outline" size="sm" className="mb-4">
+          <ArrowLeft className="size-4" /> Back
+        </Button>
+      </a>
       <h1 className="mb-6 text-3xl font-heading">User Management</h1>
 
       <Tabs defaultValue="users">

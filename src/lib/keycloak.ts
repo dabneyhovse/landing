@@ -259,6 +259,28 @@ export async function removeUserFromGroup(
   if (!res.ok) throw new Error(`removeUserFromGroup error: ${res.status}`);
 }
 
+export async function sendPasswordResetEmail(userId: string): Promise<void> {
+  const res = await kcAdminFetch(`/users/${userId}/execute-actions-email`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(["UPDATE_PASSWORD"]),
+  });
+  if (!res.ok) throw new Error(`sendPasswordResetEmail error: ${res.status}`);
+}
+
+export async function findUserByUsername(
+  username: string,
+): Promise<KcUser | null> {
+  const params = new URLSearchParams({
+    username,
+    exact: "true",
+  });
+  const res = await kcAdminFetch(`/users?${params}`);
+  if (!res.ok) throw new Error(`findUserByUsername error: ${res.status}`);
+  const users: KcUser[] = await res.json();
+  return users.length > 0 ? users[0] : null;
+}
+
 export async function getEndSessionUrl(
   postLogoutRedirectUri: string,
   idTokenHint?: string,

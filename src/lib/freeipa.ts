@@ -95,9 +95,9 @@ export async function createUsers(users: NewUser[]): Promise<UserResult[]> {
     const startIdx = batchMethods.length;
     let commandCount = 0;
 
-    // 1. Create the user directly (not staged)
+    // 1. Stage the user
     batchMethods.push({
-      method: "user_add",
+      method: "stageuser_add",
       params: [
         [user.username],
         {
@@ -111,7 +111,14 @@ export async function createUsers(users: NewUser[]): Promise<UserResult[]> {
     });
     commandCount++;
 
-    // 2. Add to membership group
+    // 2. Activate the staged user
+    batchMethods.push({
+      method: "stageuser_activate",
+      params: [[user.username], {}],
+    });
+    commandCount++;
+
+    // 3. Add to membership group
     const group = user.membership === "full" ? "full-darbs" : "darbs";
     batchMethods.push({
       method: "group_add_member",

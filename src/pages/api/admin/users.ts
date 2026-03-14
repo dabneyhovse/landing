@@ -5,8 +5,11 @@ import { requireRole, jsonResponse, jsonError } from "@/lib/auth";
 import {
   searchUsers,
   getUserGroups,
+  findUserByUsername,
+  sendPasswordResetEmail,
 } from "@/lib/keycloak";
 import { createUsers, type NewUser } from "@/lib/freeipa";
+import { sendWelcomeEmail } from "@/lib/email";
 
 function getMembership(
   groups: { name: string }[],
@@ -149,9 +152,39 @@ export const POST: APIRoute = async (ctx) => {
 
     const ipaResults = validated.length > 0 ? await createUsers(validated) : [];
 
+    // For each successfully created user, send welcome email + password reset
+    const successfulUsers = validated.filter(
+      (_, i) => ipaResults[i]?.success,
+    );
+
+    for (const user of successfulUsers) {
+      try {
+        await sendWelcomeEmail(
+          user.firstName,
+          user.username,
+          `${user.firstName} ${user.lastName}`,
+          user.email,
+        );
+      } catch (err) {
+        console.error(`[admin] Failed to send welcome email to ${user.username}:`, err);
+      }
+
+      try {
+        // Keycloak syncs from LDAP — look up the user and trigger password reset
+        const kcUser = await findUserByUsername(user.username);
+        if (kcUser) {
+          await sendPasswordResetEmail(kcUser.id);
+        } else {
+          console.warn(`[admin] User ${user.username} not yet synced to Keycloak, skipping password reset email`);
+        }
+      } catch (err) {
+        console.error(`[admin] Failed to send password reset email to ${user.username}:`, err);
+      }
+    }
+
     console.log(
       `[admin] User creation by ${ctx.locals.user!.preferred_username}: ` +
-      `${ipaResults.filter((r) => r.success).length}/${validated.length} succeeded`,
+      `${successfulUsers.length}/${validated.length} succeeded`,
     );
 
     return jsonResponse({ results: [...clientErrors, ...ipaResults] });
