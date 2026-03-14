@@ -11,11 +11,22 @@ interface User {
 export default function AuthButtons() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [frotatorEnabled, setFrotatorEnabled] = useState(false);
 
   useEffect(() => {
     fetch("/api/auth/me")
       .then((res) => (res.ok ? res.json() : null))
-      .then((data) => setUser(data))
+      .then((data) => {
+        setUser(data);
+        if (data?.roles?.includes("frotator-access")) {
+          fetch("/api/frotator/config")
+            .then((res) => (res.ok ? res.json() : null))
+            .then((config) => {
+              if (config) setFrotatorEnabled(config.enabled);
+            })
+            .catch(() => {});
+        }
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -33,7 +44,8 @@ export default function AuthButtons() {
 
   return (
     <>
-      {user.roles?.includes("frotator-access") && (
+      {user.roles?.includes("frotator-access") &&
+        (frotatorEnabled || user.roles?.includes("frotator-admin") || user.roles?.includes("backbone-admin")) && (
         <a href="/frotator">
           <button className="bg-darb-900 px-3 py-2 rounded-full w-full hover:bg-darb-800 transition hover:cursor-pointer">
             Frotator

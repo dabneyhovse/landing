@@ -158,6 +158,19 @@ export async function postSpam(message: { text: string; tabId?: string }): Promi
   });
 }
 
+// Config
+
+export async function fetchFrotatorConfig(): Promise<{ enabled: boolean }> {
+  return apiFetch("/config");
+}
+
+export async function updateFrotatorConfig(enabled: boolean): Promise<{ enabled: boolean }> {
+  return apiFetch("/config", {
+    method: "PUT",
+    body: JSON.stringify({ enabled }),
+  });
+}
+
 // Preferences
 
 export interface UserPreferences {

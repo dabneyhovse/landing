@@ -43,6 +43,8 @@ function isExpired(payload: SessionPayload): boolean {
   return Date.now() >= payload.exp * 1000;
 }
 
+const ADMIN_ROLES = ["frotator-admin", "backbone-admin"];
+
 export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.user = null;
   const sessionCookie = context.cookies.get("session");
@@ -62,5 +64,30 @@ export const onRequest = defineMiddleware(async (context, next) => {
       // Invalid or tampered cookie — treat as unauthenticated
     }
   }
+
+  // Gate frotator access when disabled (admins always pass through)
+  const path = context.url.pathname;
+  const isFrotatorPath =
+    path === "/frotator" ||
+    (path.startsWith("/api/frotator/") && path !== "/api/frotator/config");
+
+  if (isFrotatorPath) {
+    const userRoles = context.locals.user?.roles ?? [];
+    const isAdmin = ADMIN_ROLES.some((r) => userRoles.includes(r));
+    if (!isAdmin) {
+      const { isFrotatorEnabled } = await import("@/lib/frotatorConfig");
+      const enabled = await isFrotatorEnabled();
+      if (!enabled) {
+        if (path.startsWith("/api/")) {
+          return new Response(JSON.stringify({ error: "Frotator is not currently enabled" }), {
+            status: 403,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+        return context.redirect("/");
+      }
+    }
+  }
+
   return next();
 });

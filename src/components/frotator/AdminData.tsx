@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,7 +17,8 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
-import { uploadCsv, deleteFrosh } from "@/lib/api/frotator";
+import { Switch } from "@/components/ui/switch";
+import { uploadCsv, deleteFrosh, fetchFrotatorConfig, updateFrotatorConfig } from "@/lib/api/frotator";
 import { toast } from "sonner";
 import { ArrowLeft, Upload, Trash2 } from "lucide-react";
 import type { Route } from "./FrotatorApp";
@@ -30,6 +31,15 @@ export default function AdminData({ navigate }: Props) {
   const uploadRef = useRef<HTMLInputElement>(null);
   const updateRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [frotatorEnabled, setFrotatorEnabled] = useState(false);
+  const [configLoading, setConfigLoading] = useState(true);
+
+  useEffect(() => {
+    fetchFrotatorConfig()
+      .then((config) => setFrotatorEnabled(config.enabled))
+      .catch(() => {})
+      .finally(() => setConfigLoading(false));
+  }, []);
 
   const handleUpload = async (method: "POST" | "PUT", ref: React.RefObject<HTMLInputElement | null>) => {
     const file = ref.current?.files?.[0];
@@ -71,6 +81,32 @@ export default function AdminData({ navigate }: Props) {
       </Button>
 
       <h1 className="mb-6 text-3xl font-heading">Admin - Data Management</h1>
+
+      <Card className="mb-6 py-4">
+        <CardContent className="flex items-center justify-between">
+          <div>
+            <label htmlFor="frotator-toggle" className="text-lg font-medium">
+              Enable Frotator
+            </label>
+            <p className="text-sm text-muted-foreground">
+              When disabled, only admins can access Frotator.
+            </p>
+          </div>
+          <Switch
+            id="frotator-toggle"
+            className="!h-8 !w-14 [&_[data-slot=switch-thumb]]:!size-7 data-[state=unchecked]:bg-muted-foreground/30"
+            checked={frotatorEnabled}
+            disabled={configLoading}
+            onCheckedChange={(on) => {
+              setFrotatorEnabled(on);
+              updateFrotatorConfig(on).catch(() => {
+                setFrotatorEnabled(!on);
+                toast.error("Failed to update Frotator status");
+              });
+            }}
+          />
+        </CardContent>
+      </Card>
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="py-4">
