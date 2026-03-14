@@ -35,18 +35,7 @@ import FroshCard from "./FroshCard";
 import { ArrowLeft } from "lucide-react";
 import type { Route } from "./FrotatorApp";
 import type { SearchParams } from "@/lib/api/frotator";
-
-const DINNER_GROUPS = [
-  { value: "any", label: "Any Dinner" },
-  { value: "A", label: "Dinner A" },
-  { value: "B", label: "Dinner B" },
-  { value: "C", label: "Dinner C" },
-  { value: "D", label: "Dinner D" },
-  { value: "E", label: "Dinner E" },
-  { value: "F", label: "Dinner F" },
-  { value: "G", label: "Dinner G" },
-  { value: "H", label: "Dinner H" },
-];
+import { DINNER_GROUPS, SORT_LABELS, type SortOption } from "@/lib/constants";
 
 interface Props {
   navigate: (route: Route) => void;
@@ -171,19 +160,11 @@ export default function BigBadPage({ navigate, user }: Props) {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="1">Alphabetical</SelectItem>
-                          <SelectItem value="2">
-                            Most Comments
-                          </SelectItem>
-                          <SelectItem value="3">
-                            Least Comments
-                          </SelectItem>
-                          <SelectItem value="4">
-                            Most Favorites
-                          </SelectItem>
-                          <SelectItem value="5">
-                            Least Favorites
-                          </SelectItem>
+                          {(Object.entries(SORT_LABELS) as [SortOption, string][]).map(([key, label]) => (
+                            <SelectItem key={key} value={key}>
+                              {label}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>

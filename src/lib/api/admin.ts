@@ -1,25 +1,9 @@
+import { apiFetch as baseFetch } from "./fetch";
+
 const API_BASE = "/api/admin";
 
-async function apiFetch<T>(
-  path: string,
-  options?: RequestInit,
-): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
-    credentials: "same-origin",
-    ...options,
-    headers: { "Content-Type": "application/json", ...options?.headers },
-  });
-  if (!res.ok) {
-    const body = await res.text();
-    let message = `API error: ${res.status}`;
-    try {
-      const parsed = JSON.parse(body);
-      if (parsed.error) message = parsed.error;
-    } catch {}
-    throw new Error(message);
-  }
-  const text = await res.text();
-  return text ? JSON.parse(text) : (undefined as T);
+function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+  return baseFetch<T>(`${API_BASE}${path}`, options);
 }
 
 export interface AdminUser {
@@ -72,21 +56,12 @@ export async function uploadUsersCsv(
 ): Promise<{ results: CreateUserResult[] }> {
   const formData = new FormData();
   formData.append("csv-file", file);
-  const res = await fetch(`${API_BASE}/users`, {
+  // FormData sets its own Content-Type with boundary — don't pass through apiFetch
+  return baseFetch(`${API_BASE}/users`, {
     method: "POST",
-    credentials: "same-origin",
     body: formData,
+    headers: {},
   });
-  if (!res.ok) {
-    const body = await res.text();
-    let message = `API error: ${res.status}`;
-    try {
-      const parsed = JSON.parse(body);
-      if (parsed.error) message = parsed.error;
-    } catch {}
-    throw new Error(message);
-  }
-  return res.json();
 }
 
 export async function updateUserGroup(

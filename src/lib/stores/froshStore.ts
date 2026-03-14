@@ -44,7 +44,7 @@ export const useFroshStore = create<FroshState>((set, get) => ({
     dinnerGroup: "any",
     name: "",
     anagram: "",
-    sort: "1",
+    sort: "alphabetical",
   },
   selectedFrosh: null,
   selectedFroshIdx: 0,

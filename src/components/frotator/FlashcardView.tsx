@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useFroshStore } from "@/lib/stores/froshStore";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,26 +10,15 @@ import {
 } from "@/components/ui/select";
 import { ChevronLeft, ChevronRight, Shuffle, ArrowLeft } from "lucide-react";
 import type { Route } from "./FrotatorApp";
+import { DINNER_GROUPS, SORT } from "@/lib/constants";
 
 interface Props {
   navigate: (route: Route) => void;
 }
 
-const DINNER_GROUPS = [
-  { value: "any", label: "Any Dinner" },
-  { value: "A", label: "Dinner A" },
-  { value: "B", label: "Dinner B" },
-  { value: "C", label: "Dinner C" },
-  { value: "D", label: "Dinner D" },
-  { value: "E", label: "Dinner E" },
-  { value: "F", label: "Dinner F" },
-  { value: "G", label: "Dinner G" },
-  { value: "H", label: "Dinner H" },
-];
-
 export default function FlashcardView({ navigate }: Props) {
   const { cards, fetchCards } = useFroshStore();
-  const filteredCards = cards.filter((f) => f.image?.trim());
+  const filteredCards = useMemo(() => cards.filter((f) => f.image?.trim()), [cards]);
 
   const [dinnerGroup, setDinnerGroup] = useState("any");
   const [current, setCurrent] = useState(0);
@@ -37,7 +26,7 @@ export default function FlashcardView({ navigate }: Props) {
 
   const doFetch = useCallback(
     (dg: string) => {
-      fetchCards({ dinnerGroup: dg, sort: "6" });
+      fetchCards({ dinnerGroup: dg, sort: SORT.random });
       setCurrent(0);
       setFlipped(false);
     },

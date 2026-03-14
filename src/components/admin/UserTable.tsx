@@ -38,7 +38,15 @@ export default function UserTable() {
     }
   }, []);
 
+  const initialLoadDone = useRef(false);
+
   useEffect(() => {
+    if (!initialLoadDone.current) {
+      // First render: load immediately, skip debounce
+      initialLoadDone.current = true;
+      loadUsers(search, 0);
+      return;
+    }
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       setPage(0);
@@ -48,6 +56,7 @@ export default function UserTable() {
   }, [search, loadUsers]);
 
   useEffect(() => {
+    if (!initialLoadDone.current) return;
     loadUsers(search, page);
   }, [page]);
 
@@ -65,21 +74,25 @@ export default function UserTable() {
     );
 
     try {
-      // Remove old group
+      // Remove old groups
+      const removes: Promise<void>[] = [];
       if (oldMembership === "social") {
-        await updateUserGroup(user.id, "darbs", "remove");
+        removes.push(updateUserGroup(user.id, "darbs", "remove"));
       } else if (oldMembership === "full") {
-        await updateUserGroup(user.id, "full-darbs", "remove");
-        await updateUserGroup(user.id, "darbs", "remove");
+        removes.push(updateUserGroup(user.id, "full-darbs", "remove"));
+        removes.push(updateUserGroup(user.id, "darbs", "remove"));
       }
+      await Promise.all(removes);
 
-      // Add new group
+      // Add new groups
+      const adds: Promise<void>[] = [];
       if (newValue === "social") {
-        await updateUserGroup(user.id, "darbs", "add");
+        adds.push(updateUserGroup(user.id, "darbs", "add"));
       } else if (newValue === "full") {
-        await updateUserGroup(user.id, "darbs", "add");
-        await updateUserGroup(user.id, "full-darbs", "add");
+        adds.push(updateUserGroup(user.id, "darbs", "add"));
+        adds.push(updateUserGroup(user.id, "full-darbs", "add"));
       }
+      await Promise.all(adds);
 
       toast.success(`Updated ${user.username} to ${newValue}`);
     } catch {

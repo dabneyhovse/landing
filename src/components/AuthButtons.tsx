@@ -1,13 +1,5 @@
 import { useEffect, useState } from "react";
 
-interface User {
-  sub: string;
-  name: string;
-  preferred_username: string;
-  roles: string[];
-  picture?: string;
-}
-
 export default function AuthButtons() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);

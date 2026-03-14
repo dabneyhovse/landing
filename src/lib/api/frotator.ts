@@ -1,17 +1,9 @@
+import { apiFetch as baseFetch } from "./fetch";
+
 const API_BASE = "/api/frotator";
 
-export async function apiFetch<T>(
-  path: string,
-  options?: RequestInit,
-): Promise<T> {
-  const res = await fetch(`${API_BASE}${path}`, {
-    credentials: "same-origin",
-    ...options,
-    headers: { "Content-Type": "application/json", ...options?.headers },
-  });
-  if (!res.ok) throw new Error(`API error: ${res.status}`);
-  const text = await res.text();
-  return text ? JSON.parse(text) : (undefined as T);
+export function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+  return baseFetch<T>(`${API_BASE}${path}`, options);
 }
 
 export interface FroshBio {
@@ -44,11 +36,13 @@ export interface Frosh {
   rank?: number;
 }
 
+import type { SortOption } from "@/lib/constants";
+
 export interface SearchParams {
   dinnerGroup: string;
   name: string;
   anagram: string;
-  sort: string;
+  sort: SortOption;
   "bio-hometown"?: string;
   "bio-major"?: string;
   "bio-hobbies"?: string;

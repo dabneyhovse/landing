@@ -1,7 +1,8 @@
 import type { APIRoute } from "astro";
 import { requireRole, jsonResponse } from "@/lib/auth";
 import { Frosh, Comment, Vote } from "@/lib/db/models";
-import { fetchUserProfile } from "@/lib/keycloak";
+import { fetchKeycloakUser } from "@/lib/keycloak";
+import { DEFAULT_PROFILE_IMAGE } from "@/lib/constants";
 
 export const GET: APIRoute = async (ctx) => {
   const authError = requireRole(ctx.locals.user, "frotator-access");
@@ -32,24 +33,15 @@ export const GET: APIRoute = async (ctx) => {
     frosh.dataValues.displayName = frosh.safeName();
 
     const comments = frosh["frotator-comments"];
-    for (let i = 0; i < comments.length; i++) {
-      let from;
-      if (comments[i].anon) {
-        from = {
-          picture: "/resources/images/defaultProfile.png",
-          name: "",
-          username: "",
-        };
-      } else {
-        const profile = await fetchUserProfile(comments[i].userId);
-        const { firstName, lastName, username, attributes } = profile as any;
-        const name = `${firstName} ${lastName}`;
-        const picture =
-          attributes?.picture || "/resources/images/defaultProfile.png";
-        from = { name, username, picture };
-      }
-      comments[i].dataValues.from = from;
-    }
+    await Promise.all(
+      comments.map(async (comment: any) => {
+        if (comment.anon) {
+          comment.dataValues.from = { picture: DEFAULT_PROFILE_IMAGE, name: "", username: "" };
+        } else {
+          comment.dataValues.from = await fetchKeycloakUser(comment.userId);
+        }
+      }),
+    );
 
     const vote = await Vote.findOne({
       where: {

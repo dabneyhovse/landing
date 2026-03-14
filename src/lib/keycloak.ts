@@ -90,10 +90,12 @@ export async function fetchUserProfile(
   throw new Error("Failed to fetch user profile after retry");
 }
 
+import { DEFAULT_PROFILE_IMAGE } from "@/lib/constants";
+
 const ANONYMOUS_USER = {
   name: "Anonymous",
   username: "anonymous",
-  picture: "/images/defaultProfile.png",
+  picture: DEFAULT_PROFILE_IMAGE,
 };
 
 export async function fetchKeycloakUser(
@@ -109,7 +111,7 @@ export async function fetchKeycloakUser(
     return {
       name,
       username: profile.username as string,
-      picture: (profile.attributes as Record<string, string[]>)?.picture?.[0] ?? "/images/defaultProfile.png",
+      picture: (profile.attributes as Record<string, string[]>)?.picture?.[0] ?? DEFAULT_PROFILE_IMAGE,
     };
   } catch {
     return ANONYMOUS_USER;

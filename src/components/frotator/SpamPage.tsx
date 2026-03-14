@@ -13,16 +13,13 @@ import {
 } from "@/components/ui/avatar";
 import { fetchSpam, postSpam } from "@/lib/api/frotator";
 import { subscribe } from "@/lib/spamSSE";
+import type { SpamMessage as FullSpamMessage } from "@/lib/spamStore";
+
+type SpamMessage = Pick<FullSpamMessage, "text" | "name" | "timestamp">;
 import { TAB_ID } from "./SpamListener";
 import { toast } from "sonner";
 import { ArrowLeft, Send } from "lucide-react";
 import type { Route } from "./FrotatorApp";
-
-interface SpamMessage {
-  text: string;
-  name: string;
-  timestamp: number;
-}
 
 interface Props {
   navigate: (route: Route) => void;

@@ -5,6 +5,7 @@ import { parse } from "csv-parse";
 import { requireRole, jsonResponse } from "@/lib/auth";
 import { Frosh, Comment, Vote } from "@/lib/db/models";
 import { random } from "@/lib/db/db";
+import { SORT } from "@/lib/constants";
 
 const USERS_PER_PAGE = 20;
 
@@ -13,29 +14,28 @@ function paginate(page: number) {
   return { offset, limit: USERS_PER_PAGE };
 }
 
-const SORT_OPTIONS: Record<number, any> = {
-  0: [["id", "ASC"]],
-  1: [
+const SORT_OPTIONS: Record<string, any> = {
+  [SORT.alphabetical]: [
     ["lastName", "ASC"],
     ["preferredName", "ASC"],
   ],
-  2: [
+  [SORT.mostComments]: [
     [Sequelize.col("commentsCount"), "DESC"],
     ["id", "ASC"],
   ],
-  3: [
+  [SORT.leastComments]: [
     [Sequelize.col("commentsCount"), "ASC"],
     ["id", "ASC"],
   ],
-  4: [
+  [SORT.mostFavorites]: [
     [Sequelize.col("favoritesCount"), "DESC"],
     ["id", "ASC"],
   ],
-  5: [
+  [SORT.leastFavorites]: [
     [Sequelize.col("favoritesCount"), "ASC"],
     ["id", "ASC"],
   ],
-  6: random(),
+  [SORT.random]: random(),
 };
 
 const updateable = [
@@ -81,8 +81,11 @@ export const GET: APIRoute = async (ctx) => {
     const searchParam = ctx.url.searchParams.get("search");
     const search = searchParam ? JSON.parse(searchParam) : {};
 
+    const sortByComments = search.sort === SORT.mostComments || search.sort === SORT.leastComments;
+    const sortByFavorites = search.sort === SORT.mostFavorites || search.sort === SORT.leastFavorites;
+
     let include: any[] = [
-      ...(search.sort == 2 || search.sort == 3
+      ...(sortByComments
         ? [
             {
               model: Comment,
@@ -92,13 +95,13 @@ export const GET: APIRoute = async (ctx) => {
             },
           ]
         : []),
-      ...(search.sort == 4 || search.sort == 5
+      ...(sortByFavorites
         ? [
             {
               model: Vote,
               attributes: [],
               duplicating: false,
-              required: search.sort == 4 || search.sort == 5,
+              required: true,
             },
           ]
         : []),
@@ -161,7 +164,7 @@ export const GET: APIRoute = async (ctx) => {
         : paginate(Number(pageNum) || 1)),
       attributes: {
         include: [
-          ...(search.sort == 2 || search.sort == 3
+          ...(sortByComments
             ? [
                 [
                   Sequelize.fn(
@@ -172,7 +175,7 @@ export const GET: APIRoute = async (ctx) => {
                 ],
               ]
             : []),
-          ...(search.sort == 4 || search.sort == 5
+          ...(sortByFavorites
             ? [
                 [
                   Sequelize.fn(

@@ -1,6 +1,7 @@
 import type { APIRoute } from "astro";
 import { requireRole, jsonResponse } from "@/lib/auth";
 import { Comment } from "@/lib/db/models";
+import { DEFAULT_PROFILE_IMAGE } from "@/lib/constants";
 
 export const POST: APIRoute = async (ctx) => {
   const authError = requireRole(ctx.locals.user, "frotator-access");
@@ -19,15 +20,14 @@ export const POST: APIRoute = async (ctx) => {
 
     if (comment.anon) {
       comment.dataValues.from = {
-        picture: "/resources/images/defaultProfile.png",
+        picture: DEFAULT_PROFILE_IMAGE,
         preferred_username: "",
       };
     } else {
       comment.dataValues.from = {
         sub: ctx.locals.user!.sub,
         name: ctx.locals.user!.name,
-        picture:
-          ctx.locals.user!.picture || "/resources/images/defaultProfile.png",
+        picture: ctx.locals.user!.picture || DEFAULT_PROFILE_IMAGE,
       };
     }
 
