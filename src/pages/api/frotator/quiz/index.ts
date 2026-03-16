@@ -84,7 +84,7 @@ export const POST: APIRoute = async (ctx) => {
   }
 
   // Build unique name pool, filtering by frosh ID to handle duplicate names
-  const shuffledFrosh = shuffle(froshWithImages).slice(0, 5); // TODO: remove slice for production
+  const shuffledFrosh = shuffle(froshWithImages);
 
   // Track which names have already been shown as correct answers so they
   // aren't used as wrong choices in later questions (process of elimination)

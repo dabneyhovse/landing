@@ -182,11 +182,6 @@ export const POST: APIRoute = async (ctx) => {
       }
     }
 
-    console.log(
-      `[admin] User creation by ${ctx.locals.user!.preferred_username}: ` +
-      `${successfulUsers.length}/${validated.length} succeeded`,
-    );
-
     return jsonResponse({ results: [...clientErrors, ...ipaResults] });
   } catch (err) {
     console.error("POST /api/admin/users error:", err);

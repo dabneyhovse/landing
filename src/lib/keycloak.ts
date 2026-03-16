@@ -15,9 +15,6 @@ async function getConfig(): Promise<client.Configuration> {
     KC_CLIENT_ID,
     KC_CLIENT_SECRET,
     client.ClientSecretBasic(KC_CLIENT_SECRET),
-    {
-      execute: [client.allowInsecureRequests],
-    },
   );
   return oidcConfig;
 }
