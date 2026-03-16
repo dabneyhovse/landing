@@ -9,6 +9,9 @@ import node from "@astrojs/node";
 export default defineConfig({
   output: "server",
   adapter: node({ mode: "standalone" }),
+  security: {
+    allowedDomains: [{ hostname: "dabney.caltech.edu" }],
+  },
 
   vite: {
     plugins: [tailwindcss()],
