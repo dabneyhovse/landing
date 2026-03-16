@@ -47,6 +47,11 @@ const ADMIN_ROLES = ["frotator-admin", "backbone-admin"];
 
 export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.user = null;
+
+  if (context.isPrerendered) {
+    return next();
+  }
+
   const sessionCookie = context.cookies.get("session");
   if (sessionCookie) {
     try {
