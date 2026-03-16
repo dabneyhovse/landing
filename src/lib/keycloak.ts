@@ -139,18 +139,25 @@ export async function getSecretaryName(): Promise<string | null> {
 
   try {
     const token = await getServiceToken();
-    const uuid = await getClientUuid();
-    const res = await fetch(
-      `${KC_API_URL}/clients/${uuid}/roles/frotator-secretary/users`,
-      { headers: { Authorization: `Bearer ${token}` } },
-    );
+    const headers = { Authorization: `Bearer ${token}` };
 
-    if (!res.ok || res.status === 403) {
-      secretaryCache = { name: null, expiresAt: Date.now() + 60 * 1000 };
-      return null;
+    // Try client role first (direct assignment)
+    const uuid = await getClientUuid();
+    const clientRes = await fetch(
+      `${KC_API_URL}/clients/${uuid}/roles/frotator-secretary/users`,
+      { headers },
+    );
+    let users = clientRes.ok ? await clientRes.json() : [];
+
+    // Fall back to realm role (composite assignment)
+    if (users.length === 0) {
+      const realmRes = await fetch(
+        `${KC_API_URL}/roles/Secretary/users`,
+        { headers },
+      );
+      if (realmRes.ok) users = await realmRes.json();
     }
 
-    const users = await res.json();
     const name =
       users.length > 0
         ? users[0].firstName || users[0].username
