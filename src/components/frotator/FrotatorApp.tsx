@@ -33,9 +33,10 @@ interface Props {
     roles: string[];
     picture?: string;
   };
+  secretaryName: string;
 }
 
-export default function FrotatorApp({ user }: Props) {
+export default function FrotatorApp({ user, secretaryName }: Props) {
   const [route, setRoute] = useState<Route>({ page: "home" });
   const [history, setHistory] = useState<Route[]>([]);
   const fetchFrosh = useFroshStore((s) => s.fetchFrosh);
@@ -89,7 +90,7 @@ export default function FrotatorApp({ user }: Props) {
         </Switch>
       </div>
       {route.page === "home" && (
-        <FrotatorHome navigate={navigate} user={user} />
+        <FrotatorHome navigate={navigate} user={user} secretaryName={secretaryName} />
       )}
       {route.page === "frosh-list" && (
         <FroshListPage navigate={navigate} user={user} />

@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import {
   Card,
   CardHeader,
@@ -6,13 +5,13 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Users, Layers, MessageSquare, HelpCircle, ListOrdered, Settings, ArrowLeft } from "lucide-react";
-import { apiFetch } from "@/lib/api/frotator";
 import type { Route } from "./FrotatorApp";
 import type { KeyboardEvent } from "react";
 
 interface Props {
   navigate: (route: Route) => void;
   user: { roles: string[] };
+  secretaryName: string;
 }
 
 function handleCardKeyDown(e: KeyboardEvent, action: () => void) {
@@ -51,17 +50,7 @@ const NAV_CARDS = [
   },
 ];
 
-export default function FrotatorHome({ navigate, user }: Props) {
-  const [secretaryName, setSecretaryName] = useState("the secretary");
-
-  useEffect(() => {
-    apiFetch<{ name: string | null }>("/secretary")
-      .then((data) => {
-        if (data.name) setSecretaryName(data.name);
-      })
-      .catch(() => {});
-  }, []);
-
+export default function FrotatorHome({ navigate, user, secretaryName }: Props) {
   return (
     <div>
       <a

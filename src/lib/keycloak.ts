@@ -163,7 +163,7 @@ export async function getSecretaryName(): Promise<string | null> {
         ? users[0].firstName || users[0].username
         : null;
 
-    secretaryCache = { name, expiresAt: Date.now() + 5 * 60 * 1000 };
+    secretaryCache = { name, expiresAt: Date.now() + 24 * 60 * 60 * 1000 };
     return name;
   } catch {
     secretaryCache = { name: null, expiresAt: Date.now() + 60 * 1000 };
