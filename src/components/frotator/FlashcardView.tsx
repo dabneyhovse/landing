@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { useFroshStore } from "@/lib/stores/froshStore";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -11,19 +12,32 @@ import {
 import { ChevronLeft, ChevronRight, Shuffle, ArrowLeft, Star } from "lucide-react";
 import type { Route } from "./FrotatorApp";
 import { DINNER_GROUPS, SORT } from "@/lib/constants";
+import { fetchFlashcardStars, updateFlashcardStar } from "@/lib/api/frotator";
+import { toast } from "sonner";
 
 interface Props {
   navigate: (route: Route) => void;
 }
 
 export default function FlashcardView({ navigate }: Props) {
-  const { cards, fetchCards, toggleFav } = useFroshStore();
-  const filteredCards = useMemo(() => cards.filter((f) => f.image?.trim()), [cards]);
-
+  const { cards, fetchCards } = useFroshStore();
   const [dinnerGroup, setDinnerGroup] = useState("any");
   const [current, setCurrent] = useState(0);
   const [flipped, setFlipped] = useState(false);
-  const [savingFavorite, setSavingFavorite] = useState(false);
+  const [starredIds, setStarredIds] = useState<number[]>([]);
+  const [starredOnly, setStarredOnly] = useState(false);
+  const [starsLoaded, setStarsLoaded] = useState(false);
+  const [savingStar, setSavingStar] = useState(false);
+
+  const filteredCards = useMemo(
+    () => cards.filter((f) =>
+      f.image?.trim() && (!starredOnly || starredIds.includes(f.id))
+    ),
+    [cards, starredOnly, starredIds],
+  );
+  const index = Math.min(current, Math.max(0, filteredCards.length - 1));
+  const frosh = filteredCards[index];
+  const starred = frosh ? starredIds.includes(frosh.id) : false;
 
   const doFetch = useCallback(
     (dg: string) => {
@@ -36,16 +50,37 @@ export default function FlashcardView({ navigate }: Props) {
 
   useEffect(() => {
     doFetch(dinnerGroup);
+    fetchFlashcardStars()
+      .then((ids) => {
+        setStarredIds(ids);
+        setStarsLoaded(true);
+      })
+      .catch(() => toast.error("There was an error fetching your practice stars"));
   }, []);
+
+  const toggleStar = async (froshId: number, starred: boolean) => {
+    setSavingStar(true);
+    try {
+      await updateFlashcardStar(froshId, starred);
+      setStarredIds((ids) =>
+        starred ? [...ids, froshId] : ids.filter((id) => id !== froshId)
+      );
+      if (starredOnly && !starred) setFlipped(false);
+    } catch {
+      toast.error("There was an error saving your practice star");
+    } finally {
+      setSavingStar(false);
+    }
+  };
 
   const goPrev = () => {
     setFlipped(false);
-    setCurrent((c) => (c <= 0 ? filteredCards.length - 1 : c - 1));
+    setCurrent(index <= 0 ? Math.max(0, filteredCards.length - 1) : index - 1);
   };
 
   const goNext = () => {
     setFlipped(false);
-    setCurrent((c) => (c >= filteredCards.length - 1 ? 0 : c + 1));
+    setCurrent(index >= filteredCards.length - 1 ? 0 : index + 1);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -56,8 +91,6 @@ export default function FlashcardView({ navigate }: Props) {
       setFlipped((f) => !f);
     }
   };
-
-  const frosh = filteredCards[current];
 
   return (
     <div
@@ -74,7 +107,7 @@ export default function FlashcardView({ navigate }: Props) {
         <ArrowLeft className="size-4" /> Back
       </Button>
 
-      <div className="mb-4 flex items-center justify-center gap-3">
+      <div className="mb-4 flex flex-wrap items-center justify-center gap-3">
         <Select
           value={dinnerGroup}
           onValueChange={(v) => {
@@ -99,6 +132,19 @@ export default function FlashcardView({ navigate }: Props) {
         >
           <Shuffle className="size-4" /> Reshuffle
         </Button>
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="starred-only"
+            checked={starredOnly}
+            disabled={!starsLoaded}
+            onCheckedChange={(checked) => {
+              setStarredOnly(!!checked);
+              setCurrent(0);
+              setFlipped(false);
+            }}
+          />
+          <label htmlFor="starred-only" className="text-sm">Starred only</label>
+        </div>
       </div>
 
       {frosh ? (
@@ -146,37 +192,35 @@ export default function FlashcardView({ navigate }: Props) {
           </div>
         </div>
       ) : (
-        <p className="py-12 text-center text-sm">No flashcards available.</p>
+        <p className="py-12 text-center text-sm">
+          {starredOnly ? "No starred flashcards in this group." : "No flashcards available."}
+        </p>
       )}
 
       <div className="flex justify-center gap-3">
-        <Button variant="outline" className="w-28" onClick={goPrev}>
+        <Button variant="outline" className="w-28" onClick={goPrev} disabled={!frosh}>
           <ChevronLeft className="size-4" /> Previous
         </Button>
         {frosh && (
           <Button
-            variant={frosh.favorite ? "default" : "outline"}
+            variant={starred ? "default" : "outline"}
             size="icon"
-            aria-label={frosh.favorite ? "Unstar flashcard" : "Star flashcard"}
-            aria-pressed={frosh.favorite}
-            disabled={savingFavorite}
-            onClick={async () => {
-              setSavingFavorite(true);
-              await toggleFav(frosh.id, !frosh.favorite);
-              setSavingFavorite(false);
-            }}
+            aria-label={starred ? "Unstar flashcard" : "Star flashcard for more practice"}
+            aria-pressed={starred}
+            disabled={!starsLoaded || savingStar}
+            onClick={() => toggleStar(frosh.id, !starred)}
           >
-            <Star className={`size-4 ${frosh.favorite ? "fill-current" : ""}`} />
+            <Star className={`size-4 ${starred ? "fill-current" : ""}`} />
           </Button>
         )}
-        <Button variant="outline" className="w-28" onClick={goNext}>
+        <Button variant="outline" className="w-28" onClick={goNext} disabled={!frosh}>
           Next <ChevronRight className="size-4" />
         </Button>
       </div>
 
       {filteredCards.length > 0 && (
         <p className="mt-2 text-center text-xs text-foreground/60">
-          {current + 1} / {filteredCards.length}
+          {index + 1} / {filteredCards.length}
         </p>
       )}
     </div>

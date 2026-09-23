@@ -207,17 +207,15 @@ export const GET: APIRoute = async (ctx) => {
 
     const frosh = await Frosh.findAndCountAll(query);
 
-    const favoriteVotes = await Vote.findAll({
-      where: { userId: ctx.locals.user!.sub },
-      attributes: ["frotatorFroshId"],
-    });
-    const favoriteIds = new Set(
-      favoriteVotes.map((v) => v.getDataValue("frotatorFroshId"))
-    );
-
     if (search.only_my_favorites) {
+      const favoriteVotes = await Vote.findAll({
+        where: { userId: ctx.locals.user!.sub },
+      });
+      const favoriteIds = [...favoriteVotes].map(
+        (v: any) => v.dataValues.frotatorFroshId
+      );
       frosh.rows = frosh.rows.filter((f: any) =>
-        favoriteIds.has(f.id)
+        favoriteIds.includes(f.id)
       );
     }
 
@@ -229,7 +227,6 @@ export const GET: APIRoute = async (ctx) => {
 
     frosh.rows.forEach((f: any) => {
       f.dataValues.displayName = f.safeName();
-      f.dataValues.favorite = favoriteIds.has(f.id);
     });
 
     return jsonResponse(frosh);

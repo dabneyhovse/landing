@@ -81,6 +81,17 @@ export async function fetchFroshCards(
   return apiFetch(`/frosh?${qs}`);
 }
 
+export async function fetchFlashcardStars(): Promise<number[]> {
+  return apiFetch("/flashcard-stars");
+}
+
+export async function updateFlashcardStar(froshId: number, starred: boolean): Promise<void> {
+  await apiFetch("/flashcard-stars", {
+    method: "PUT",
+    body: JSON.stringify({ froshId, starred }),
+  });
+}
+
 export async function fetchSingleFrosh(id: number): Promise<Frosh> {
   return apiFetch(`/frosh/${id}`);
 }

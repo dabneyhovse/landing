@@ -3,6 +3,7 @@ import Comment from "./comment";
 import Concern from "./concern";
 import Event from "./event";
 import Frosh from "./frosh";
+import FlashcardStar from "./flashcardStar";
 import Prediction from "./prediction";
 import QuizAttempt from "./quizAttempt";
 import SiteConfig from "./siteConfig";
@@ -25,6 +26,9 @@ Frosh.belongsToMany(Event, { through: "frotator-frosh-events" });
 Frosh.hasMany(Vote);
 Vote.belongsTo(Frosh);
 
+// Private practice markers for flashcards
+FlashcardStar.belongsTo(Frosh, { foreignKey: "froshId", onDelete: "CASCADE" });
+
 // Concerns about frosh
 Frosh.hasMany(Concern);
 Concern.belongsTo(Frosh);
@@ -36,4 +40,4 @@ Comment.belongsTo(Comment, { foreignKey: "replyToId" });
 // Sync tables on first import
 db.sync().catch(console.error);
 
-export { db, Comment, Concern, Event, Frosh, Prediction, QuizAttempt, SiteConfig, UserPreference, Vote };
+export { db, Comment, Concern, Event, Frosh, FlashcardStar, Prediction, QuizAttempt, SiteConfig, UserPreference, Vote };
