@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChevronLeft, ChevronRight, Shuffle, ArrowLeft } from "lucide-react";
+import { ChevronLeft, ChevronRight, Shuffle, ArrowLeft, Star } from "lucide-react";
 import type { Route } from "./FrotatorApp";
 import { DINNER_GROUPS, SORT } from "@/lib/constants";
 
@@ -17,12 +17,13 @@ interface Props {
 }
 
 export default function FlashcardView({ navigate }: Props) {
-  const { cards, fetchCards } = useFroshStore();
+  const { cards, fetchCards, toggleFav } = useFroshStore();
   const filteredCards = useMemo(() => cards.filter((f) => f.image?.trim()), [cards]);
 
   const [dinnerGroup, setDinnerGroup] = useState("any");
   const [current, setCurrent] = useState(0);
   const [flipped, setFlipped] = useState(false);
+  const [savingFavorite, setSavingFavorite] = useState(false);
 
   const doFetch = useCallback(
     (dg: string) => {
@@ -152,6 +153,22 @@ export default function FlashcardView({ navigate }: Props) {
         <Button variant="outline" className="w-28" onClick={goPrev}>
           <ChevronLeft className="size-4" /> Previous
         </Button>
+        {frosh && (
+          <Button
+            variant={frosh.favorite ? "default" : "outline"}
+            size="icon"
+            aria-label={frosh.favorite ? "Unstar flashcard" : "Star flashcard"}
+            aria-pressed={frosh.favorite}
+            disabled={savingFavorite}
+            onClick={async () => {
+              setSavingFavorite(true);
+              await toggleFav(frosh.id, !frosh.favorite);
+              setSavingFavorite(false);
+            }}
+          >
+            <Star className={`size-4 ${frosh.favorite ? "fill-current" : ""}`} />
+          </Button>
+        )}
         <Button variant="outline" className="w-28" onClick={goNext}>
           Next <ChevronRight className="size-4" />
         </Button>

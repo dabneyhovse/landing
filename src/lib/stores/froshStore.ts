@@ -105,10 +105,13 @@ export const useFroshStore = create<FroshState>((set, get) => ({
   toggleFav: async (froshId, favorite) => {
     try {
       await toggleFavorite(froshId, favorite);
-      const current = get().selectedFrosh;
-      if (current) {
-        set({ selectedFrosh: { ...current, favorite } });
-      }
+      set((state) => ({
+        cards: state.cards.map((f) => f.id === froshId ? { ...f, favorite } : f),
+        list: state.list.map((f) => f.id === froshId ? { ...f, favorite } : f),
+        selectedFrosh: state.selectedFrosh?.id === froshId
+          ? { ...state.selectedFrosh, favorite }
+          : state.selectedFrosh,
+      }));
     } catch {
       toast.error("There was an error favoriting this frosh");
     }
