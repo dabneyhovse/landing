@@ -182,7 +182,11 @@ export default function FlashcardView({ navigate }: Props) {
               {flipped && (
                 <>
                   <p className="text-3xl font-heading">{frosh.displayName}</p>
+                  {frosh.anagram && (
+                    <p className="mt-1 text-center text-sm italic">"{frosh.anagram}"</p>
+                  )}
                   <p className="mt-1 text-sm">{frosh.pronouns}</p>
+                  <p className="mt-3 text-center text-sm">Major: {frosh.bio.major}</p>
                   <p className="mt-3 text-center text-sm italic">
                     "{frosh.bio.funfact}"
                   </p>
