@@ -81,7 +81,8 @@ export default function FroshDetail({ froshId, navigate, goBack, user }: Props) 
 
   return (
     <div>
-      <div className="mb-4 flex flex-wrap gap-2">
+      {/* Navbar */}
+      <div className="mb-4 flex flex-wrap gap-2 sticky top-2 z-40">
         <Button variant="outline" size="sm" onClick={goBack}>
           <ArrowLeft className="size-4" /> Back
         </Button>
@@ -100,9 +101,9 @@ export default function FroshDetail({ froshId, navigate, goBack, user }: Props) 
         </Button>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_2fr]">
+      <div className="grid gap-6 lg:grid-cols-[2fr_1fr] items-start">
         {/* Profile card */}
-        <Card>
+        <Card className="lg:order-2 lg:sticky lg:top-2">
           <CardContent className="flex flex-col items-center gap-4 p-6">
             {frosh.image?.trim() ? (
               <img
@@ -136,81 +137,83 @@ export default function FroshDetail({ froshId, navigate, goBack, user }: Props) 
           </CardContent>
         </Card>
 
-        {/* Bio card */}
-        <Card className="py-4">
-          <CardHeader>
-            <CardTitle>Prefrosh Bio</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {bioFields.map((field, i) => (
-              <div key={field.label}>
-                {i > 0 && <Separator className="my-3" />}
-                <div className="grid grid-cols-[120px_1fr] gap-2 sm:grid-cols-[160px_1fr]">
-                  <span className="text-sm font-medium">{field.label}</span>
-                  <span className="text-sm">
-                    {field.value || "no information"}
-                  </span>
+        <div>
+          {/* Bio card */}
+          <Card className="py-4">
+            <CardHeader>
+              <CardTitle>Prefrosh Bio</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {bioFields.map((field, i) => (
+                <div key={field.label}>
+                  {i > 0 && <Separator className="my-3" />}
+                  <div className="grid grid-cols-[120px_1fr] gap-2 sm:grid-cols-[160px_1fr]">
+                    <span className="text-sm font-medium">{field.label}</span>
+                    <span className="text-sm">
+                      {field.value || "no information"}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
+              ))}
+            </CardContent>
+          </Card>
 
-      {/* Comments */}
-      <Card className="mt-6 py-4 gap-2">
-        <CardHeader>
-          <CardTitle>
-            Comments ({frosh["frotator-comments"].length})
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="max-w-3xl">
-            {frosh["frotator-comments"].map((c) => (
-              <CommentItem key={c.id} comment={c} />
-            ))}
+          {/* Comments */}
+          <Card className="mt-6 py-4 gap-2">
+            <CardHeader>
+              <CardTitle>
+                Comments ({frosh["frotator-comments"].length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="max-w-3xl">
+                {frosh["frotator-comments"].map((c) => (
+                  <CommentItem key={c.id} comment={c} />
+                ))}
 
-            <div className="mt-4 flex gap-3">
-              <Avatar>
-                <AvatarImage
-                  src={user.picture || "/resources/images/defaultProfile.png"}
-                  alt="avatar"
-                />
-                <AvatarFallback>
-                  {user.name?.[0]?.toUpperCase() ?? "?"}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 space-y-3">
-                <Textarea
-                  placeholder="Write a comment..."
-                  rows={3}
-                  value={newComment.text}
-                  onChange={(e) =>
-                    setNewComment((s) => ({ ...s, text: e.target.value }))
-                  }
-                />
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      id="anon-check"
-                      checked={newComment.anon}
-                      onCheckedChange={(v) =>
-                        setNewComment((s) => ({ ...s, anon: !!v }))
+                <div className="mt-4 flex gap-3">
+                  <Avatar>
+                    <AvatarImage
+                      src={user.picture || "/resources/images/defaultProfile.png"}
+                      alt="avatar"
+                    />
+                    <AvatarFallback>
+                      {user.name?.[0]?.toUpperCase() ?? "?"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 space-y-3">
+                    <Textarea
+                      placeholder="Write a comment..."
+                      rows={3}
+                      value={newComment.text}
+                      onChange={(e) =>
+                        setNewComment((s) => ({ ...s, text: e.target.value }))
                       }
                     />
-                    <label htmlFor="anon-check" className="text-sm">
-                      Anonymous
-                    </label>
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
+                        <Checkbox
+                          id="anon-check"
+                          checked={newComment.anon}
+                          onCheckedChange={(v) =>
+                            setNewComment((s) => ({ ...s, anon: !!v }))
+                          }
+                        />
+                        <label htmlFor="anon-check" className="text-sm">
+                          Anonymous
+                        </label>
+                      </div>
+                      <Button size="sm" onClick={handlePost}>
+                        Post comment
+                      </Button>
+                    </div>
                   </div>
-                  <Button size="sm" onClick={handlePost}>
-                    Post comment
-                  </Button>
                 </div>
               </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }
