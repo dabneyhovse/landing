@@ -59,7 +59,8 @@ function validateUser(u: unknown): { valid: false; error: string } | { valid: tr
   if (!u || typeof u !== "object") return { valid: false, error: "Invalid user object" };
   const obj = u as Record<string, unknown>;
 
-  const username = String(obj.username ?? "").trim();
+  // FreeIPA and Keycloak store usernames lowercased
+  const username = String(obj.username ?? "").trim().toLowerCase();
   const firstName = String(obj.firstName ?? "").trim();
   const lastName = String(obj.lastName ?? "").trim();
   const email = String(obj.email ?? "").trim();

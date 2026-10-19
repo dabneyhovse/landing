@@ -39,7 +39,11 @@ export default function SingleUserForm() {
       setResults(data.results);
 
       if (data.results.every((r) => r.success)) {
-        toast.success(`User ${username} created successfully`);
+        if (data.results.some((r) => r.warning)) {
+          toast.warning(`User ${username} created with warnings`);
+        } else {
+          toast.success(`User ${username} created successfully`);
+        }
         setUsername("");
         setFirstName("");
         setLastName("");

@@ -2,10 +2,15 @@ export async function apiFetch<T>(
   url: string,
   options?: RequestInit,
 ): Promise<T> {
+  // Only string bodies are JSON; for FormData etc. the browser sets Content-Type
+  const isJson = typeof options?.body === "string";
   const res = await fetch(url, {
     credentials: "same-origin",
     ...options,
-    headers: { "Content-Type": "application/json", ...options?.headers },
+    headers: {
+      ...(isJson ? { "Content-Type": "application/json" } : {}),
+      ...options?.headers,
+    },
   });
   if (!res.ok) {
     const body = await res.text();

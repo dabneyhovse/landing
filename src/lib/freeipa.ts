@@ -85,78 +85,120 @@ export interface UserResult {
   username: string;
   success: boolean;
   error?: string;
+  warning?: string;
+}
+
+type BatchCommand = { method: string; params: [unknown[], Record<string, unknown>] };
+type BatchResult = {
+  error?: unknown;
+  result?: unknown;
+  failed?: { member?: { user?: [string, string][] } };
+};
+
+async function ipaBatch(commands: BatchCommand[]): Promise<BatchResult[]> {
+  if (commands.length === 0) return [];
+  const result = (await ipaFetch("batch", [commands, {}])) as { results: BatchResult[] };
+  return result.results;
+}
+
+function errorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  return typeof error === "object" && error !== null
+    ? (error as { message?: string }).message ?? JSON.stringify(error)
+    : String(error);
+}
+
+function membershipGroup(user: NewUser): string {
+  return user.membership === "full" ? "full-darbs" : "darbs";
 }
 
 export async function createUsers(users: NewUser[]): Promise<UserResult[]> {
-  const batchMethods: { method: string; params: [unknown[], Record<string, unknown>] }[] = [];
-  const userIndexMap: { username: string; startIdx: number; commandCount: number }[] = [];
+  // FreeIPA batches aren't transactional and every command runs regardless of
+  // earlier failures, so each step is its own batch over only the users that
+  // passed the previous one. Otherwise a failed stageuser_add would still
+  // activate a leftover stage entry, or add an existing user to a group.
+  const results: UserResult[] = users.map((u) => ({ username: u.username, success: true }));
+  const fail = (i: number, error: unknown) => {
+    results[i] = { username: users[i].username, success: false, error: errorMessage(error) };
+  };
+  const pending = () => users.map((_, i) => i).filter((i) => results[i].success);
 
-  for (const user of users) {
-    const startIdx = batchMethods.length;
-    let commandCount = 0;
-
-    // 1. Stage the user
-    batchMethods.push({
-      method: "stageuser_add",
-      params: [
-        [user.username],
-        {
-          givenname: user.firstName,
-          sn: user.lastName,
-          cn: `${user.firstName} ${user.lastName}`,
-          mail: user.email,
-          random: true,
-        },
-      ],
-    });
-    commandCount++;
-
-    // 2. Activate the staged user
-    batchMethods.push({
-      method: "stageuser_activate",
-      params: [[user.username], {}],
-    });
-    commandCount++;
-
-    // 3. Add to membership group
-    const group = user.membership === "full" ? "full-darbs" : "darbs";
-    batchMethods.push({
-      method: "group_add_member",
-      params: [[group], { user: [user.username] }],
-    });
-    commandCount++;
-
-    userIndexMap.push({ username: user.username, startIdx, commandCount });
-  }
-
-  // Execute batch
-  let batchResults: { error?: unknown; result?: unknown }[];
   try {
-    const result = await ipaFetch("batch", [
-      batchMethods,
-      {},
-    ]) as { results: { error?: unknown; result?: unknown }[] };
-    batchResults = result.results;
+    // Step 1: stage each user
+    const addResults = await ipaBatch(
+      users.map((user) => ({
+        method: "stageuser_add",
+        params: [
+          [user.username],
+          {
+            givenname: user.firstName,
+            sn: user.lastName,
+            cn: `${user.firstName} ${user.lastName}`,
+            mail: user.email,
+            random: true,
+          },
+        ],
+      })),
+    );
+    addResults.forEach((r, i) => r.error && fail(i, r.error));
+
+    // Step 2: activate the users we just staged
+    const staged = pending();
+    const activateResults = await ipaBatch(
+      staged.map((i) => ({ method: "stageuser_activate", params: [[users[i].username], {}] })),
+    );
+    activateResults.forEach((r, j) => r.error && fail(staged[j], r.error));
+    // Stage entries left behind by a failed activation would block a retry
+    const orphaned = staged.filter((i) => !results[i].success);
+
+    // Step 3: add newly created users to their membership groups, and clean up orphans
+    const usersByGroup = new Map<string, number[]>();
+    for (const i of pending()) {
+      const group = membershipGroup(users[i]);
+      usersByGroup.set(group, [...(usersByGroup.get(group) ?? []), i]);
+    }
+    const groups = [...usersByGroup.keys()];
+    const finalResults = await ipaBatch([
+      ...groups.map((group) => ({
+        method: "group_add_member",
+        params: [[group], { user: usersByGroup.get(group)!.map((i) => users[i].username) }] as BatchCommand["params"],
+      })),
+      ...orphaned.map((i) => ({
+        method: "stageuser_del",
+        params: [[users[i].username], {}] as BatchCommand["params"],
+      })),
+    ]).catch((err) => {
+      // Accounts already exist at this point, so don't fail the whole request
+      for (const i of pending()) {
+        results[i].warning = `Not added to ${membershipGroup(users[i])}: ${errorMessage(err)}`;
+      }
+      return [];
+    });
+
+    // Account creation already succeeded, so group failures are warnings
+    groups.forEach((group, g) => {
+      const r = finalResults[g];
+      if (!r) return;
+      const members = usersByGroup.get(group)!;
+      if (r.error) {
+        for (const i of members) results[i].warning = `Not added to ${group}: ${errorMessage(r.error)}`;
+        return;
+      }
+      // group_add_member reports per-member failures here instead of erroring
+      for (const [username, reason] of r.failed?.member?.user ?? []) {
+        const i = members.find((m) => users[m].username === username.toLowerCase());
+        if (i !== undefined) results[i].warning = `Not added to ${group}: ${reason}`;
+      }
+    });
+    finalResults.slice(groups.length).forEach((r, j) => {
+      if (r.error) {
+        console.error(`[freeipa] Failed to clean up staged user ${users[orphaned[j]].username}:`, r.error);
+      }
+    });
   } catch (err) {
-    // If the entire batch fails, mark all users as failed
-    return users.map((u) => ({
-      username: u.username,
-      success: false,
-      error: err instanceof Error ? err.message : "Batch request failed",
-    }));
+    // A whole batch failed; anything not already resolved is unknown, so report it as failed
+    for (const i of pending()) fail(i, err);
   }
 
-  // Parse per-user results
-  return userIndexMap.map(({ username, startIdx, commandCount }) => {
-    const userResults = batchResults.slice(startIdx, startIdx + commandCount);
-    const firstError = userResults.find((r) => r.error);
-    if (firstError) {
-      const errMsg =
-        typeof firstError.error === "object" && firstError.error !== null
-          ? (firstError.error as { message?: string }).message ?? JSON.stringify(firstError.error)
-          : String(firstError.error);
-      return { username, success: false, error: errMsg };
-    }
-    return { username, success: true };
-  });
+  return results;
 }
