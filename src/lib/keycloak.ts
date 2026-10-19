@@ -1,9 +1,5 @@
 import * as client from "openid-client";
-
-const ISSUER_BASE_URL = import.meta.env.ISSUER_BASE_URL;
-const KC_CLIENT_ID = import.meta.env.KC_CLIENT_ID;
-const KC_CLIENT_SECRET = import.meta.env.KC_CLIENT_SECRET;
-const KC_API_URL = import.meta.env.KC_API_URL;
+import { ISSUER_BASE_URL, KC_CLIENT_ID, KC_CLIENT_SECRET, KC_API_URL } from "astro:env/server";
 
 let oidcConfig: client.Configuration | null = null;
 

@@ -1,6 +1,4 @@
-const IPA_HOST = import.meta.env.IPA_HOST;
-const IPA_USER = import.meta.env.IPA_USER;
-const IPA_PASSWORD = import.meta.env.IPA_PASSWORD;
+import { IPA_HOST, IPA_USER, IPA_PASSWORD } from "astro:env/server";
 
 let sessionCookie: { cookie: string; expiresAt: number } | null = null;
 

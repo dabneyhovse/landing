@@ -1,8 +1,15 @@
 import { defineMiddleware } from "astro:middleware";
+import { KC_CLIENT_SECRET } from "astro:env/server";
 import { createHash, createCipheriv, createDecipheriv, randomBytes } from "node:crypto";
 
-const SECRET = import.meta.env.KC_CLIENT_SECRET ?? "";
-const KEY = createHash("sha256").update(SECRET).digest(); // 32 bytes for AES-256
+// Derived lazily so builds without secrets succeed but requests fail closed.
+let key: Buffer | null = null;
+function getKey(): Buffer {
+  if (key) return key;
+  if (!KC_CLIENT_SECRET) throw new Error("KC_CLIENT_SECRET must be set to encrypt session cookies");
+  key = createHash("sha256").update(KC_CLIENT_SECRET).digest(); // 32 bytes for AES-256
+  return key;
+}
 
 interface SessionPayload {
   sub: string;
@@ -15,7 +22,7 @@ interface SessionPayload {
 
 export function encryptSession(payload: SessionPayload): string {
   const iv = randomBytes(12);
-  const cipher = createCipheriv("aes-256-gcm", KEY, iv);
+  const cipher = createCipheriv("aes-256-gcm", getKey(), iv);
   const json = JSON.stringify(payload);
   const encrypted = Buffer.concat([cipher.update(json, "utf8"), cipher.final()]);
   const authTag = cipher.getAuthTag();
@@ -30,7 +37,7 @@ export function decryptSession(token: string): SessionPayload | null {
     const iv = buf.subarray(0, 12);
     const authTag = buf.subarray(12, 28);
     const ciphertext = buf.subarray(28);
-    const decipher = createDecipheriv("aes-256-gcm", KEY, iv);
+    const decipher = createDecipheriv("aes-256-gcm", getKey(), iv);
     decipher.setAuthTag(authTag);
     const decrypted = Buffer.concat([decipher.update(ciphertext), decipher.final()]);
     return JSON.parse(decrypted.toString("utf8"));

@@ -1,5 +1,5 @@
 // @ts-check
-import { defineConfig, fontProviders } from "astro/config";
+import { defineConfig, envField, fontProviders } from "astro/config";
 
 import tailwindcss from "@tailwindcss/vite";
 import react from "@astrojs/react";
@@ -9,6 +9,18 @@ import node from "@astrojs/node";
 export default defineConfig({
   output: "server",
   adapter: node({ mode: "standalone" }),
+  // Server secrets are read at runtime (process.env in production, .env in dev)
+  // rather than inlined at build time, since CI builds without them.
+  env: {
+    schema: Object.fromEntries(
+      [
+        "ISSUER_BASE_URL", "KC_CLIENT_ID", "KC_CLIENT_SECRET", "KC_API_URL",
+        "IPA_HOST", "IPA_USER", "IPA_PASSWORD",
+        "SMTP_HOST", "SMTP_USER", "SMTP_PASSWORD",
+      ].map((name) => [name, envField.string({ context: "server", access: "secret", optional: true })]),
+    ),
+  },
+
   security: {
     allowedDomains: [{ hostname: "dabney.caltech.edu" }],
   },

@@ -1,8 +1,5 @@
 import nodemailer from "nodemailer";
-
-const SMTP_HOST = import.meta.env.SMTP_HOST;
-const SMTP_USER = import.meta.env.SMTP_USER;
-const SMTP_PASSWORD = import.meta.env.SMTP_PASSWORD;
+import { SMTP_HOST, SMTP_USER, SMTP_PASSWORD } from "astro:env/server";
 
 function getTransport() {
   return nodemailer.createTransport({
