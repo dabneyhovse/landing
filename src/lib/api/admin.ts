@@ -27,6 +27,7 @@ export interface CreateUserResult {
   username: string;
   success: boolean;
   error?: string;
+  warning?: string;
 }
 
 export async function fetchUsers(
@@ -56,11 +57,9 @@ export async function uploadUsersCsv(
 ): Promise<{ results: CreateUserResult[] }> {
   const formData = new FormData();
   formData.append("csv-file", file);
-  // FormData sets its own Content-Type with boundary — don't pass through apiFetch
-  return baseFetch(`${API_BASE}/users`, {
+  return apiFetch("/users", {
     method: "POST",
     body: formData,
-    headers: {},
   });
 }
 

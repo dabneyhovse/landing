@@ -31,8 +31,12 @@ export default function BulkUpload() {
       const succeeded = data.results.filter((r) => r.success).length;
       const failed = data.results.filter((r) => !r.success).length;
 
-      if (failed === 0) {
+      const warned = data.results.filter((r) => r.success && r.warning).length;
+
+      if (failed === 0 && warned === 0) {
         toast.success(`All ${succeeded} users created successfully`);
+      } else if (failed === 0) {
+        toast.warning(`${succeeded} created, ${warned} with warnings`);
       } else {
         toast.warning(`${succeeded} created, ${failed} failed`);
       }

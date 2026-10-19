@@ -41,7 +41,7 @@ export default function ResultsTable({ results }: Props) {
                       {r.success ? "OK" : "Failed"}
                     </Badge>
                   </td>
-                  <td className="py-2 text-xs opacity-70">{r.error ?? "—"}</td>
+                  <td className="py-2 text-xs opacity-70">{r.error ?? r.warning ?? "—"}</td>
                 </tr>
               ))}
             </tbody>
