@@ -10,6 +10,11 @@ on:
 env:
   IMAGE_NAME: landing
 
+# Builds finish in push order, so an older build can't overwrite a newer pin.
+concurrency:
+  group: landing-image
+  cancel-in-progress: false
+
 jobs:
   container:
     name: Build & push image
@@ -30,6 +35,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push image
+        id: build
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -41,3 +47,36 @@ jobs:
           labels: |
             org.opencontainers.image.source=${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
+
+      - name: Check out infrastructure repo
+        if: github.ref == 'refs/heads/main'
+        uses: actions/checkout@v4
+        with:
+          repository: dabneyhovse/infrastructure
+          token: ${{ secrets.INFRASTRUCTURE_TOKEN }}
+          path: infrastructure
+
+      - name: Pin new image in infrastructure repo
+        if: github.ref == 'refs/heads/main'
+        working-directory: infrastructure
+        env:
+          IMAGE: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:sha-${{ github.sha }}@${{ steps.build.outputs.digest }}
+        run: |
+          set -eu
+          case "$IMAGE" in
+            *@sha256:????????????????????????????????????????????????????????????????) ;;
+            *) echo "No image digest from the build step: $IMAGE" >&2; exit 1 ;;
+          esac
+          sed -i -E "s|^( *image: )ghcr\.io/dabneyhovse/landing:.*\$|\1${IMAGE}|" services/landing/compose.yml
+          if git diff --quiet; then
+            echo "Already pinned."
+            exit 0
+          fi
+          git config user.name "landing-ci"
+          git config user.email "landing-ci@users.noreply.github.com"
+          git commit -am "landing: pin ${GITHUB_SHA::7}"
+          for attempt in 1 2 3; do
+            git pull --rebase --quiet && git push && exit 0
+            sleep 5
+          done
+          exit 1
