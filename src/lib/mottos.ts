@@ -1,48 +1,55 @@
-// History of the homepage motto, rebuilt from the commits the motto bot makes to Hero.astro.
+// The homepage motto and its history, kept in files on a Docker volume that the motto bot writes
+// and this site reads on every request (so a change shows up without a rebuild or deploy):
+//   motto.txt      the current motto, plain text
+//   history.jsonl  one JSON object per line, oldest first: {"at": ISO time, "text": "...", "who": "..."}
+// "who" is for the operators' records and is never shown on the site or in the feed.
+
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
+
+export const DEFAULT_MOTTO = "Not a Soc VP, not my problem!";
 
 export interface Motto {
-  sha: string;
+  id: string;
   text: string;
   date: string; // ISO 8601
 }
 
-export interface GithubCommit {
-  sha: string;
-  html_url: string;
-  commit: {
-    message: string;
-    committer: { name: string; date: string } | null;
-  };
+function mottoDir(): string {
+  return process.env.MOTTO_DIR ?? "/motto";
 }
 
-export const MOTTO_COMMITTER = "motto-bot";
-
-/**
- * The motto in a motto-bot commit: everything after "motto:" on the subject line, without the
- * trailing requester tag the bot adds, such as "(@who)" or "(set by @who via Telegram)".
- */
-export function parseMessage(message: string): string | null {
-  const subject = message.split("\n")[0];
-  const match = subject.match(
-    /^motto:\s*(\S.*?)(?:\s+\((?:set by )?(?:@\w+|user \d+)(?: via Telegram)?\))?\s*$/,
-  );
-  return match && match[1] ? match[1] : null;
-}
-
-/** Newest first. Only commits made by the motto bot count. */
-export function toMottos(commits: GithubCommit[]): Motto[] {
-  const mottos: Motto[] = [];
-  for (const c of commits) {
-    if (c.commit.committer?.name !== MOTTO_COMMITTER) continue;
-    const text = parseMessage(c.commit.message);
-    if (!text) continue;
-    mottos.push({
-      sha: c.sha,
-      text,
-      date: c.commit.committer.date,
-    });
+/** The current motto, or a default if the file is missing or empty. */
+export async function readCurrentMotto(): Promise<string> {
+  try {
+    const text = (await readFile(join(mottoDir(), "motto.txt"), "utf8")).trim();
+    return text || DEFAULT_MOTTO;
+  } catch {
+    return DEFAULT_MOTTO;
   }
-  return mottos;
+}
+
+/** Every motto, newest first. Damaged or partial lines are skipped. */
+export async function readHistory(): Promise<Motto[]> {
+  let raw: string;
+  try {
+    raw = await readFile(join(mottoDir(), "history.jsonl"), "utf8");
+  } catch {
+    return [];
+  }
+  const mottos: Motto[] = [];
+  raw.split("\n").forEach((line, index) => {
+    if (!line.trim()) return;
+    try {
+      const entry = JSON.parse(line);
+      const time = typeof entry.at === "string" ? Date.parse(entry.at) : NaN;
+      if (typeof entry.text !== "string" || !entry.text.trim() || Number.isNaN(time)) return;
+      mottos.push({ id: String(index), text: entry.text.trim(), date: new Date(time).toISOString() });
+    } catch {
+      // A line cut short by a write in progress.
+    }
+  });
+  return mottos.reverse();
 }
 
 export function escapeXml(value: string): string {
@@ -65,7 +72,7 @@ export function renderFeed(mottos: Motto[], selfUrl: string, siteUrl: string): s
     .map(
       (m) => `  <entry>
     <title>${escapeXml(m.text)}</title>
-    <id>urn:dabney:motto:${escapeXml(m.sha)}</id>
+    <id>urn:dabney:motto:${escapeXml(m.id)}</id>
     <updated>${escapeXml(m.date)}</updated>
   </entry>`,
     )

@@ -3,6 +3,10 @@ import { Image } from "astro:assets";
 import crest from "../assets/crest.svg";
 import SidePhoto from "../assets/gallery/Ski Trip.jpg";
 import AuthButtons from "./AuthButtons";
+import { readCurrentMotto } from "@/lib/mottos";
+
+// Read on every request from the motto volume, so the Telegram bot can change it instantly.
+const motto = await readCurrentMotto();
 ---
 
 <section class="lg:grid gap-16 lg:grid-cols-2 lg:gap-0 lg:h-screen">
@@ -32,7 +36,7 @@ import AuthButtons from "./AuthButtons";
           role="button"
           tabindex="0"
         >
-          /motto /literally1984
+          {motto}
         </span>
       </p>
       <div class="grid lg:grid-cols-3 gap-4 text-lg">
