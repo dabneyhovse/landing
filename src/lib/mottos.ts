@@ -4,7 +4,6 @@ export interface Motto {
   sha: string;
   text: string;
   date: string; // ISO 8601
-  url: string;
 }
 
 export interface GithubCommit {
@@ -41,7 +40,6 @@ export function toMottos(commits: GithubCommit[]): Motto[] {
       sha: c.sha,
       text,
       date: c.commit.committer.date,
-      url: c.html_url,
     });
   }
   return mottos;
@@ -58,7 +56,8 @@ export function escapeXml(value: string): string {
 
 /**
  * An Atom feed. Each entry's title is the motto, which is what DokuWiki's {{rss>}} shows. The
- * entries carry no requester, and link to the homepage rather than to the commit.
+ * entries carry no requester and deliberately no <link>: DokuWiki prints an entry without a
+ * link as plain text, and turns one with a link into a hyperlink.
  */
 export function renderFeed(mottos: Motto[], selfUrl: string, siteUrl: string): string {
   const updated = mottos[0]?.date ?? new Date().toISOString();
@@ -66,8 +65,7 @@ export function renderFeed(mottos: Motto[], selfUrl: string, siteUrl: string): s
     .map(
       (m) => `  <entry>
     <title>${escapeXml(m.text)}</title>
-    <id>${escapeXml(m.url)}</id>
-    <link href="${escapeXml(siteUrl)}/"/>
+    <id>urn:dabney:motto:${escapeXml(m.sha)}</id>
     <updated>${escapeXml(m.date)}</updated>
   </entry>`,
     )
